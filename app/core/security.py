@@ -1,9 +1,18 @@
 from typing import Dict
 
+import requests
+
+from app.core.config import settings
+
 
 def get_github_access_token(code: str) -> Dict:
-    return {
-        "access_token": "e72e16c7e42f292c6912e7710c838347ae178b4a",
-        "scope": "repo,gist",
-        "token_type": "bearer",
-    }
+    response = requests.post(
+        settings.GITHUB_ACCESS_TOKEN_URL,
+        headers={"Accept": "application/json"},
+        params={
+            "client_id": settings.GITHUB_OAUTH_CLIENT_ID,
+            "client_secret": settings.GITHUB_OAUTH_CLIENT_SECRET,
+            "code": code,
+        },
+    )
+    return response.json()
