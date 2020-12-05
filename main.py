@@ -1,15 +1,10 @@
-from typing import Optional
-
 from fastapi import FastAPI
 
-app = FastAPI()
+from app.api.api_v1.api import api_router
+from app.core.config import settings
 
+app = FastAPI(
+    title=settings.PROJECT_NAME, openapi_url=f"{settings.API_V1_STR}/openapi.json"
+)
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Optional[str] = None):
-    return {"item_id": item_id, "q": q}
+app.include_router(api_router, prefix=settings.API_V1_STR)
