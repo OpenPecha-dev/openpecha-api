@@ -22,7 +22,7 @@ notes = [
 ]
 
 
-@router.get("{pecha_id}/texts/{text_id}", response_model=schemas.Text)
+@router.get("/{pecha_id}/texts/{text_id}", response_model=schemas.Text)
 def get_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
     if page_no:
         return schemas.Text(id=text_id, pages=[pages[0]], notes=notes)

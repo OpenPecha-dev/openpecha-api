@@ -8,6 +8,7 @@ class PageBase(BaseModel):
     id: str
     page_no: int
     content: str
+    link: Optional[str] = None
 
 
 class Page(PageBase):
