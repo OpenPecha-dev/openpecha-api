@@ -24,3 +24,7 @@ class Text(BaseModel):
     id: str
     pages: List[Page]
     notes: Optional[List[NotesPage]]
+
+
+class PedurmaPreviewPage(BaseModel):
+    content: str
