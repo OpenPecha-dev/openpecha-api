@@ -22,7 +22,10 @@ def get_text_pages_and_notes(name: str) -> schemas.Text:
     notes = [
         schemas.pecha.NotesPage(
             id="1", page_no="1", content="note 1 content", name="Page 100"
-        )
+        ),
+        schemas.pecha.NotesPage(
+            id="2", page_no="2", content="note 2 content", name="Page 100"
+        ),
     ]
     return pages, notes
 
@@ -35,7 +38,17 @@ def get_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
     return schemas.Text(id=text_id, pages=pages, notes=notes)
 
 
+@router.post("/predurma/save")
+def save_text(text: schemas.Text):
+    return f"Text {text.id} saved!"
+
+
 @router.post("/pedurma/preview", response_model=schemas.PedurmaPreviewPage)
-def pedurma_page_preview(page: schemas.Page, note: schemas.NotesPage):
-    content = "This Page preview"
+def pedurma_page_preview(
+    google_page: schemas.Page,
+    google_page_note: schemas.NotesPage,
+    namsel_page: schemas.Page,
+    namsel_page_note: schemas.NotesPage,
+):
+    content = f"This Page preview google page {google_page.page_no}"
     return schemas.PedurmaPreviewPage(content=content)
