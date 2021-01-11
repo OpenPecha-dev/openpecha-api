@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 
 from fastapi import APIRouter
 
@@ -50,5 +50,41 @@ def pedurma_page_preview(
     namsel_page: schemas.Page,
     namsel_page_note: schemas.NotesPage,
 ):
-    content = f"This Page preview google page {google_page.page_no}"
+    content = (
+        f"<p>This Page preview google page {google_page.page_no}</p>"
+        f"<p>{google_page.content}</p>"
+    )
     return schemas.PedurmaPreviewPage(content=content)
+
+
+@router.get(
+    "/pedurma/{text_id}/notes", response_model=List[schemas.pecha.PedurmaNoteEdit]
+)
+def get_text_notes(text_id: str):
+    notes = [
+        schemas.pecha.PedurmaNoteEdit(
+            image_link="https://www.tbrc.org/browser/ImageService?work=W1PD96682&igroup=I1PD96839&image=504&first=1&last=2000&fetchimg=yes",
+            page_no=50,
+            ref_start_page_no=10,
+            ref_end_page_no=15,
+        ),
+        schemas.pecha.PedurmaNoteEdit(
+            image_link="https://www.tbrc.org/browser/ImageService?work=W1PD96682&igroup=I1PD96839&image=505&first=1&last=2000&fetchimg=yes",
+            page_no=51,
+            ref_start_page_no=16,
+            ref_end_page_no=20,
+        ),
+        schemas.pecha.PedurmaNoteEdit(
+            image_link="https://www.tbrc.org/browser/ImageService?work=W1PD96682&igroup=I1PD96839&image=525&first=1&last=2000&fetchimg=yes",
+            page_no=52,
+            ref_start_page_no=21,
+            ref_end_page_no=25,
+        ),
+    ]
+    return notes
+
+
+@router.post("/pedurma/{text_id}/notes")
+def update_text_notes(notes: List[schemas.pecha.PedurmaNoteEdit]):
+    print(notes)
+    return notes

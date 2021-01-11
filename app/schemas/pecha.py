@@ -28,3 +28,10 @@ class Text(BaseModel):
 
 class PedurmaPreviewPage(BaseModel):
     content: str
+
+
+class PedurmaNoteEdit(BaseModel):
+    image_link: str
+    page_no: int
+    ref_start_page_no: int
+    ref_end_page_no: int
