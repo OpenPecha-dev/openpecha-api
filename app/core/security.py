@@ -2,7 +2,9 @@ from typing import Dict
 
 import requests
 
-from app.core.config import settings
+from app.core.config import get_settings
+
+settings = get_settings()
 
 
 def get_github_access_token(code: str) -> Dict:
