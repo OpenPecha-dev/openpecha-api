@@ -1,11 +1,13 @@
 from fastapi.testclient import TestClient
 from starlette import responses
 
+from pydantic import BaseSettings
+
 from app import schemas
-from app.core.config import settings
 
 
-def test_get_text(client: TestClient) -> None:
+
+def test_get_text(client: TestClient, settings: BaseSettings) -> None:
     pecha_id = "P0000001"
     text_id = "T-1"
 

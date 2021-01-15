@@ -5,6 +5,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 from openpecha.serializers import HFMLSerializer
+from openpecha.cli import download_pecha
 
 from app.schemas.pecha import PedurmaNoteEdit
 
@@ -12,13 +13,12 @@ from app.schemas.pecha import PedurmaNoteEdit
 def from_yaml(yml_path):
     return yaml.safe_load(yml_path.read_text(encoding='utf-8'))
 
-def get_meta_data(pecha_id, text_uuid, meta_data):
+def get_meta_data(text_uuid, meta_data):
     try:
         meta = {
             'work_id': meta_data['work_id'],
             'img_grp_offset': meta_data['img_grp_offset'],
             'pref': meta_data['pref'],
-            'pecha_id': pecha_id,
             'text_uuid': text_uuid,
         }
     except:
@@ -60,7 +60,7 @@ def get_durchen_pages(vol_text):
 
 
 def get_page_num(page_ann):
-    pg_pat = re.search('(\d+[a-z]{1})', page_ann)
+    pg_pat = re.search(r'(\d+[a-z]{1})', page_ann)
     pg_num = int(pg_pat.group(1)[:-1]) * 2
     pg_face = pg_pat.group(1)[-1]
     if pg_face == "a":
@@ -91,42 +91,42 @@ def preprocess_namsel_notes(text):
 
     patterns = [
         # normalize single zeros '༥༥་' --> '༥༥༠'
-        ["([༠-༩])[་༷]", "\g<1>༠"],
+        [r"([༠-༩])[་༷]", r"\g<1>༠"],
         # normalize double zeros '༧༷་' --> '༧༠༠'
-        ["༠[་༷]", "༠༠"],
-        ["༠[་༷]", "༠༠"],
+        [r"༠[་༷]", r"༠༠"],
+        [r"༠[་༷]", r"༠༠"],
         # normalize punct
-        ["\r", "\n"],
-        ["༑", "།"],
-        ["།།", "། །"],
-        ["།་", "། "],
-        ["\s+", " "],
-        ["།\s།\s*\n", "།\n"],
-        ["།\s།\s«", "། «"],
-        ["༌", "་"],  # normalize NB tsek
-        ["ག\s*།", "ག"],
-        ["་\s*", "་"],
-        ["་\s*", "་"],
-        ["་\s*\n", "་"],
-        ["་+", "་"],
+        [r"\r", r"\n"],
+        [r"༑", r"།"],
+        [r"།།", r"། །"],
+        [r"།་", r"། "],
+        [r"\s+", r" "],
+        [r"།\s།\s*\n", r"།\n"],
+        [r"།\s།\s«", r"། «"],
+        [r"༌", r"་"],  # normalize NB tsek
+        [r"ག\s*།", r"ག"],
+        [r"་\s*", r"་"],
+        [r"་\s*", r"་"],
+        [r"་\s*\n", r"་"],
+        [r"་+", r"་"],
         # normalize and tag page numbers '73ཝ་768' --> ' <p73-768> '
-        ["([0-9]+?)[ཝ—-]་?([0-9]+)", " <p\g<1>-\g<2>> "],
+        [r"([0-9]+?)[ཝ—-]་?([0-9]+)", r" <p\g<1>-\g<2>> "],
         # tag page references '༡༤༥ ①' --> <p༡༤༥> ①'
-        [" ?([༠-༩]+?)(\s\(?[①-⓪༠-༩ ཿ༅]\)?)", " \n<r\g<1>>\g<2>"],  # basic page ref
+        [r" ?([༠-༩]+?)(\s\(?[①-⓪༠-༩ ཿ༅]\)?)", r" \n<r\g<1>>\g<2>"],  # basic page ref
         # normalize edition marks «<edition>»
-        ["〈〈?", "«"],
-        ["〉〉?", "»"],
-        ["《", "«"],
-        ["》", "»"],
-        ["([ཀགཤ།]) །«", "\g<1> «"],
-        ["([ཀགཤ།])་?«", "\g<1> «"],
-        ["»\s+", "»"],
-        ["«\s+«", "«"],
-        ["»+", "»"],
-        ["[=—]", "-"],
-        ["\s+-", "-"],
-        ["\s+\+", "+"],
-        ["»\s+«", "»«"],  
+        [r"〈〈?", r"«"],
+        [r"〉〉?", r"»"],
+        [r"《", r"«"],
+        [r"》", r"»"],
+        [r"([ཀགཤ།]) །«", r"\g<1> «"],
+        [r"([ཀགཤ།])་?«", r"\g<1> «"],
+        [r"»\s+", r"»"],
+        [r"«\s+«", r"«"],
+        [r"»+", r"»"],
+        [r"[=—]", r"-"],
+        [r"\s+-", r"-"],
+        [r"\s+\+", r"+"],
+        [r"»\s+«", r"»«"],  
     ]
 
     for p in patterns:
@@ -142,10 +142,10 @@ def get_num(line):
     return eng_num
 
 def get_durchen_pg_num(clean_page):
-    pg_num = ''
+    pg_num = 0
     try:
-        page_ann = re.search('<p\d+-(\d+)\>', clean_page)
-        pg_num= page_ann.group(1)
+        page_ann = re.findall(r'<p\d+-(\d+)\>', clean_page)
+        pg_num= page_ann[-1]
     except:
         pass
     return pg_num
@@ -167,7 +167,7 @@ def get_page_refs(page_content):
 def process_page(page_ann, page_content):
     durchen_image_num = get_page_num(page_ann)
     pg_link = get_link(durchen_image_num, text_meta)
-    unwanted_annotations = ['\[([𰵀-󴉱])?[0-9]+[a-z]{1}\]', '\[\w+\.\d+\]', '<d', 'd>']
+    unwanted_annotations = [r'\[([𰵀-󴉱])?[0-9]+[a-z]{1}\]', r'\[\w+\.\d+\]', r'<d', r'd>']
     page_content = rm_annotations(page_content, unwanted_annotations)
     clean_page = preprocess_namsel_notes(page_content)
     durchen_pg_num = get_durchen_pg_num(clean_page)
@@ -186,9 +186,9 @@ def get_pages_to_edit(durchen_pages, text_meta):
     return pages_to_edit
 
 def get_pedurma_edit_notes(pecha_id, text_id):
-    pedurma_edit_notes = []
-    opf_path = f"./test/{pecha_id}.opf/"
-    meta_data = from_yaml(Path(f"./test/{pecha_id}.opf/meta.yml"))
+    pedurma_edit_notes = {}
+    opf_path = download_pecha(pecha_id)
+    meta_data = from_yaml(Path(f"{opf_path}/{pecha_id}.opf/meta.yml"))
     serializer = HFMLSerializer(opf_path, text_id=text_id)
     serializer.apply_layers()
     hfml_text  = serializer.get_result()
@@ -198,7 +198,7 @@ def get_pedurma_edit_notes(pecha_id, text_id):
         text_meta['vol'] = int(vol[1:])
         durchen = get_durchen(text_content)
         durchen_pages = get_durchen_pages(durchen)
-        pedurma_edit_notes += get_pages_to_edit(durchen_pages, text_meta)
+        pedurma_edit_notes[vol] = get_pages_to_edit(durchen_pages, text_meta)
     return pedurma_edit_notes
     
     

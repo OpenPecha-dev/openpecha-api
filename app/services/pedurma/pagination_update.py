@@ -2,6 +2,7 @@ import re
 import yaml
 from pathlib import Path
 from pydantic import BaseModel
+from openpecha.cli import download_pecha
 
 from app.schemas.pecha import PedurmaNoteEdit
 
@@ -11,15 +12,6 @@ def from_yaml(yml_path):
 
 def to_yaml(dict_):
     return yaml.safe_dump(dict_, sort_keys = False, allow_unicode=True)
-
-
-def get_text_info(text_id, index):
-    texts = index['annotations']
-    for uuid, text in texts.items():
-        if text['work_id'] == text_id:
-            return (uuid, text)
-    return ('', '')
-
 
 def get_page_num(page_ann):
     pg_num = int(page_ann[:-1]) * 2
@@ -83,14 +75,15 @@ def update_pg_ref(vol, pages_to_edit, pagination_layer):
     return pagination_layer
 
 
-def update_pagination(text_id, opf_path, pages_to_edit):
-    index = from_yaml(Path(f"{opf_path}/index.yml"))
-    text_uuid, text_info = get_text_info(text_id, index)
-    for span in text_info['span']:
-        vol = span['vol'] 
-        pagination_layer = from_yaml(Path(f"{opf_path}/layer/v{int(vol):03}/Pagination.yml"))
-        pagination_layer = update_pg_ref(vol, pages_to_edit, pagination_layer)
-        yield pagination_layer
-        #Path(f'{opf_path}/layer/v{int(vol):03}/Pagination.yml').write_text(to_yaml(pagination_layer), encoding='utf-8')
+def update_pagination(pecha_id, text_id, pages_to_edit):
+    opf_path = download_pecha(pecha_id)
+    index = from_yaml(Path(f"{opf_path}/{pecha_id}.opf/index.yml"))
+    for vol, pedurma_edit_notes in pages_to_edit.items():
+        vol = int(vol[1:])
+        pagination_layer = from_yaml(Path(f"{opf_path}/{pecha_id}/layer/v{int(vol):03}/Pagination.yml"))
+        pagination_layer = update_pg_ref(vol, pedurma_edit_notes, pagination_layer)
+        #yield pagination_layer
+        #Path(f'test/Pagination.yml').write_text(to_yaml(pagination_layer), encoding='utf-8')
+    return pagination_layer
 
     
