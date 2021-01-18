@@ -13,6 +13,13 @@ def from_yaml(yml_path):
 def to_yaml(dict_):
     return yaml.safe_dump(dict_, sort_keys = False, allow_unicode=True)
 
+def get_text_info(text_id, index):
+    texts = index['annotations']
+    for uuid, text in texts.items():
+        if text['work_id'] == text_id:
+            return (uuid, text)
+    return ('', '')
+
 def get_page_num(page_ann):
     pg_num = int(page_ann[:-1]) * 2
     pg_face = page_ann[-1]
@@ -61,29 +68,30 @@ def add_note_pg_ref(page_to_edit, pagination_layer):
     offset = durchen_image_num - int(page_to_edit.page_no)
     durchen_pg_idx = get_pg_index(durchen_image_num)
     paginations = pagination_layer['annotations']
-    for pg in range(start_pg, end_pg+1):
-        pg_num = pg + offset
-        pg_idx = get_pg_index(pg_num)
-        paginations = update_pagination_annotation(durchen_pg_idx, pg_idx, paginations)
+    if start_pg != 0 and end_pg != 0:
+        for pg in range(start_pg, end_pg+1):
+            pg_num = pg + offset
+            pg_idx = get_pg_index(pg_num)
+            paginations = update_pagination_annotation(durchen_pg_idx, pg_idx, paginations)
     pagination_layer['annotations'] = paginations
     return pagination_layer
 
 
 def update_pg_ref(vol, pages_to_edit, pagination_layer):
     for page_to_edit in pages_to_edit:
-        pagination_layer = add_note_pg_ref(page_to_edit, pagination_layer)
+        if vol == page_to_edit.vol:
+            pagination_layer = add_note_pg_ref(page_to_edit, pagination_layer)
     return pagination_layer
 
 
-def update_pagination(pecha_id, text_id, pages_to_edit):
-    opf_path = download_pecha(pecha_id)
+def update_pagination(pecha_id, text_id, pedurma_edit_notes, opf_path):
+    #opf_path = download_pecha(pecha_id)
     index = from_yaml(Path(f"{opf_path}/{pecha_id}.opf/index.yml"))
-    for vol, pedurma_edit_notes in pages_to_edit.items():
-        vol = int(vol[1:])
-        pagination_layer = from_yaml(Path(f"{opf_path}/{pecha_id}/layer/v{int(vol):03}/Pagination.yml"))
+    text_uuid, text_info = get_text_info(text_id, index)
+    for span in text_info['span']:
+        vol = span['vol']
+        pagination_layer = from_yaml(Path(f"{opf_path}/{pecha_id}.opf/layers/v{int(vol):03}/Pagination.yml"))
         pagination_layer = update_pg_ref(vol, pedurma_edit_notes, pagination_layer)
-        #yield pagination_layer
-        #Path(f'test/Pagination.yml').write_text(to_yaml(pagination_layer), encoding='utf-8')
-    return pagination_layer
+        yield vol, pagination_layer
 
     

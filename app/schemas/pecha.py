@@ -36,3 +36,4 @@ class PedurmaNoteEdit(BaseModel):
     page_no: int
     ref_start_page_no: str
     ref_end_page_no: str
+    vol: int

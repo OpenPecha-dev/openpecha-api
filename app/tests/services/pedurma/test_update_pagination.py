@@ -1,6 +1,7 @@
 import pytest
 import yaml
 
+from pathlib import Path
 from app.schemas.pecha import PedurmaNoteEdit
 from app.services.pedurma.pagination_update import update_pagination
 
@@ -11,19 +12,34 @@ def from_yaml(yml_path):
 def to_yaml(dict_):
     return yaml.safe_dump(dict_, sort_keys = False, allow_unicode=True)
 
-def test_pagination_update():
+def test_pagination_update_crossvol():
     text_id = "D1118"
-    pecha_id = "P000792"
-    layer_path = f"./tests/services/pedurma/data/Pagination.yml"
-    pages_to_edit = {
-        'v001': [
-                    PedurmaNoteEdit(image_link = 'hei', image_no = 225, page_no= 187,ref_start_page_no= '178', ref_end_page_no = '180'),
-                    PedurmaNoteEdit(image_link = 'hei', image_no = 226, page_no = 188,ref_start_page_no= '181', ref_end_page_no = '187'),
+    pecha_id = "P000002"
+    layer_path = f"./app/tests/services/pedurma/data/Pagination.yml"
+    opf_path = "./app/tests/services/pedurma/data/"
+    pages_to_edit = [
+                    PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95846::I1PD958460004.jpg/full/max/0/default.jpg', image_no = 4, page_no= 4,ref_start_page_no= '1', ref_end_page_no = '3', vol = 1),
+                    PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95846::I1PD958460005.jpg/full/max/0/default.jpg', image_no = 5, page_no = 5,ref_start_page_no= '4', ref_end_page_no = '0', vol = 1),
+                    PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95847::I1PD958470004.jpg/full/max/0/default.jpg', image_no = 4, page_no= 4,ref_start_page_no= '1', ref_end_page_no = '3', vol = 2),
+                    PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95847::I1PD958470005.jpg/full/max/0/default.jpg', image_no = 5, page_no = 5,ref_start_page_no= '0', ref_end_page_no = '0', vol = 2),
                 ]
-    }
-        
-    new_pagination_layer = to_yaml(update_pagination(pecha_id, text_id, pages_to_edit))
-    expected_layer = from_yaml(Path(layer_path))
-    assert new_pagination_layer == expected_layer
+    for vol, new_pagination_layer in update_pagination(pecha_id, text_id, pages_to_edit, opf_path):
+        layer_path = f"./app/tests/services/pedurma/data/paginations/{text_id}/v{int(vol):03}.yml"
+        expected_layer = from_yaml(Path(layer_path))
+        assert new_pagination_layer == expected_layer
+
+def test_pagination_update():
+    text_id = "D1119"
+    pecha_id = "P000002"
+    layer_path = f"./app/tests/services/pedurma/data/Pagination.yml"
+    opf_path = "./app/tests/services/pedurma/data/"
+    pages_to_edit = [
+                    PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95847::I1PD958470004.jpg/full/max/0/default.jpg', image_no = 9, page_no= 9,ref_start_page_no= '7', ref_end_page_no = '8', vol = 2),
+                    PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95847::I1PD958470005.jpg/full/max/0/default.jpg', image_no = 10, page_no = 10,ref_start_page_no= '0', ref_end_page_no = '0', vol = 2),
+                ]
+    for vol, new_pagination_layer in update_pagination(pecha_id, text_id, pages_to_edit, opf_path):
+        layer_path = f"./app/tests/services/pedurma/data/paginations/{text_id}/v{int(vol):03}.yml"
+        expected_layer = from_yaml(Path(layer_path))
+        assert new_pagination_layer == expected_layer
     
     
