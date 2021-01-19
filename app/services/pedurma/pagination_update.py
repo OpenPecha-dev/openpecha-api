@@ -1,7 +1,5 @@
-import re
 import yaml
 from pathlib import Path
-from pydantic import BaseModel
 from openpecha.cli import download_pecha
 
 from app.schemas.pecha import PedurmaNoteEdit

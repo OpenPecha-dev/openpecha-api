@@ -19,7 +19,7 @@ def test_pagination_update_crossvol():
     opf_path = "./app/tests/services/pedurma/data/"
     pages_to_edit = [
                     PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95846::I1PD958460004.jpg/full/max/0/default.jpg', image_no = 4, page_no= 4,ref_start_page_no= '1', ref_end_page_no = '3', vol = 1),
-                    PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95846::I1PD958460005.jpg/full/max/0/default.jpg', image_no = 5, page_no = 5,ref_start_page_no= '4', ref_end_page_no = '0', vol = 1),
+                    PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95846::I1PD958460005.jpg/full/max/0/default.jpg', image_no = 5, page_no = 5,ref_start_page_no= '4', ref_end_page_no = '4', vol = 1),
                     PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95847::I1PD958470004.jpg/full/max/0/default.jpg', image_no = 4, page_no= 4,ref_start_page_no= '1', ref_end_page_no = '3', vol = 2),
                     PedurmaNoteEdit(image_link = 'https://iiif.bdrc.io/bdr:I1PD95847::I1PD958470005.jpg/full/max/0/default.jpg', image_no = 5, page_no = 5,ref_start_page_no= '0', ref_end_page_no = '0', vol = 2),
                 ]

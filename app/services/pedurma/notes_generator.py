@@ -1,9 +1,7 @@
 import re 
 import yaml
 from pathlib import Path
-from typing import List, Optional
 
-from pydantic import BaseModel
 from openpecha.serializers import HFMLSerializer
 from openpecha.cli import download_pecha
 
@@ -48,7 +46,6 @@ def get_durchen(text_with_durchen):
 
 def get_durchen_pages(vol_text):
     durchen_pages = {}
-    pg_text = ""
     pages = re.split(r"(\[[𰵀-󴉱]?[0-9]+[a-z]{1}\])", vol_text)
     for i, page in enumerate(pages[1:]):
         if i % 2 == 0:
