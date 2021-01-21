@@ -8,12 +8,13 @@ class PageBase(BaseModel):
     id: str
     page_no: int
     content: str
-    link: Optional[str] = None
+    name: str
+    vol: str
+    image_link: Optional[str] = None
 
 
 class Page(PageBase):
-    name: str
-    notes_page_id: Optional[str]
+    note_ref: Optional[str]
 
 
 class NotesPage(PageBase):
