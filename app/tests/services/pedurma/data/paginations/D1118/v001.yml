@@ -9,7 +9,7 @@ annotations:
     span:
       start: 0
       end: 818
-    note_ref: 2b
+    note_ref: 298e57f45293411d90330c99850c6dcf
   ad49ebbf703f421ba39bdf2c87459ac7:
     page_index: 1b
     page_info: ''
@@ -17,7 +17,7 @@ annotations:
     span:
       start: 818
       end: 2155
-    note_ref: 2b
+    note_ref: 298e57f45293411d90330c99850c6dcf
   eb46c007b3f740f2bac52291acbcb3e9:
     page_index: 2a
     page_info: ''
@@ -25,7 +25,7 @@ annotations:
     span:
       start: 2155
       end: 3472
-    note_ref: 2b
+    note_ref: 298e57f45293411d90330c99850c6dcf
   298e57f45293411d90330c99850c6dcf:
     page_index: 2b
     page_info: ''
@@ -33,7 +33,7 @@ annotations:
     span:
       start: 3472
       end: 4824
-    note_ref: 3a
+    note_ref: b4f77b1f42154ddcb0757fbf038b2360
   b4f77b1f42154ddcb0757fbf038b2360:
     page_index: 3a
     page_info: ''
