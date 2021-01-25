@@ -9,7 +9,7 @@ annotations:
     span:
       start: 0
       end: 59
-    note_ref: 2b
+    note_ref: 46d97ed3d9ca4ddabc3c413f306df03a
   e8e314a7457b40348b5dd7a744004900:
     page_index: 1b
     page_info: ''
@@ -17,7 +17,7 @@ annotations:
     span:
       start: 62
       end: 101
-    note_ref: 2b
+    note_ref: 46d97ed3d9ca4ddabc3c413f306df03a
   29c64dc1fa624b42b08814ca4f3a78b4:
     page_index: 2a
     page_info: ''
@@ -25,7 +25,7 @@ annotations:
     span:
       start: 104
       end: 143
-    note_ref: 2b
+    note_ref: 46d97ed3d9ca4ddabc3c413f306df03a
   46d97ed3d9ca4ddabc3c413f306df03a:
     page_index: 2b
     page_info: ''
