@@ -33,6 +33,8 @@ class PedurmaPreviewPage(BaseModel):
 
 class PedurmaNoteEdit(BaseModel):
     image_link: str
+    image_no: int
     page_no: int
-    ref_start_page_no: int
-    ref_end_page_no: int
+    ref_start_page_no: str
+    ref_end_page_no: str
+    vol: int
