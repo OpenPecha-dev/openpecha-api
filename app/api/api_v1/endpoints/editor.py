@@ -6,6 +6,7 @@ from app import schemas
 from app.services.pedurma.notes import get_pedurma_text_edit_notes
 from app.services.pedurma.pagination_update import update_text_pagination
 from app.services.pedurma_reconstruction.reconstruction import get_preview_page
+from app.services.text_obj.texts import get_text_obj
 
 router = APIRouter()
 
@@ -35,10 +36,8 @@ def get_text_pages_and_notes(name: str) -> schemas.Text:
 
 @router.get("/{pecha_id}/texts/{text_id}", response_model=schemas.Text)
 def get_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
-    pages, notes = get_text_pages_and_notes(pecha_id)
-    if page_no:
-        return schemas.Text(id=text_id, pages=[pages[0]], notes=notes)
-    return schemas.Text(id=text_id, pages=pages, notes=notes)
+    text = get_text_obj(pecha_id, text_id)
+    return text
 
 
 @router.post("/predurma/save")
