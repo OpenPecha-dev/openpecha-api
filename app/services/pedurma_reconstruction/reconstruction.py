@@ -903,7 +903,9 @@ def get_preview_page(g_body_page, n_body_page, g_durchen_page, n_durchen_page):
     )
     g_body_page_content = g_body_page_content.replace("#", "")
     body_result = reconstruct_body(n_body_page_content, g_body_page_content, vol_num)
-    footnotes = reconstruct_footnote(n_durchen_page, g_durchen_page, vol_num)
+    footnotes = reconstruct_footnote(
+        n_durchen_page_content, g_durchen_page_content, vol_num
+    )
     pg_num = get_page_num(body_result, vol_num)
     merge_marker, merge = merge_footnotes_per_page(body_result, footnotes[pg_num])
     return merge

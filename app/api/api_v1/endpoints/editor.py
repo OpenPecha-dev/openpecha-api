@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from app import schemas
 from app.services.pedurma.notes import get_pedurma_text_edit_notes
 from app.services.pedurma.pagination_update import update_text_pagination
+from app.services.pedurma_reconstruction.reconstruction import get_preview_page
 
 router = APIRouter()
 
@@ -52,11 +53,10 @@ def pedurma_page_preview(
     namsel_page: schemas.Page,
     namsel_page_note: schemas.NotesPage,
 ):
-    content = (
-        f"<p>This Page preview google page {google_page.page_no}</p>"
-        f"<p>{google_page.content}</p>"
+    preview_page = get_preview_page(
+        google_page, namsel_page, google_page_note, namsel_page_note
     )
-    return schemas.PedurmaPreviewPage(content=content)
+    return preview_page
 
 
 @router.get(
