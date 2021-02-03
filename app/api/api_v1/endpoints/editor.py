@@ -1,6 +1,8 @@
+from pathlib import Path
 from typing import List, Optional
 
-from fastapi import APIRouter
+from fastapi import APIRouter, status
+from starlette.status import HTTP_201_CREATED
 
 from app import schemas
 from app.services.pedurma.notes import get_pedurma_text_edit_notes
@@ -9,29 +11,6 @@ from app.services.pedurma_reconstruction.reconstruction import get_preview_page
 from app.services.text_obj.texts import get_text_obj
 
 router = APIRouter()
-
-
-def get_text_pages_and_notes(name: str) -> schemas.Text:
-    pages = [
-        schemas.pecha.Page(
-            id=str(i),
-            page_no=str(i),
-            content=f"{name} page {i} content",
-            name=f"Page {i}",
-            notes_page_id="1",
-        )
-        for i in range(1, 3)
-    ]
-
-    notes = [
-        schemas.pecha.NotesPage(
-            id="1", page_no="1", content="note 1 content", name="Page 100"
-        ),
-        schemas.pecha.NotesPage(
-            id="2", page_no="2", content="note 2 content", name="Page 100"
-        ),
-    ]
-    return pages, notes
 
 
 @router.get("/{pecha_id}/texts/{text_id}", response_model=schemas.Text)
@@ -69,3 +48,19 @@ def get_text_notes(text_id: str):
 @router.post("/pedurma/{text_id}/notes")
 def update_text_notes(text_id: str, notes: List[schemas.pecha.PedurmaNoteEdit]):
     update_text_pagination(text_id, notes)
+
+
+@router.post("/pedurma/{task_name}/completed", status_code=status.HTTP_201_CREATED)
+def mark_text_completed(task_name: str, text_id: str):
+    completed_texts_fn = Path.home() / ".openpecha" / task_name
+    with completed_texts_fn.open("a") as fn:
+        fn.write(f"{text_id}\n")
+    return {"message": "Task marked as completed!"}
+
+
+@router.get("/pedurma/{task_name}/completed", response_model=List[Optional[str]])
+def get_completed_texts(task_name: str):
+    completed_texts_fn = Path.home() / ".openpecha" / task_name
+    if not completed_texts_fn.is_file():
+        return []
+    return completed_texts_fn.read_text().splitlines()
