@@ -200,7 +200,7 @@ def serialize_text_obj(text):
 
 
 def get_text_obj(pecha_id, text_id):
-    pecha_path = download_pecha(pecha_id)
+    pecha_path = download_pecha(pecha_id, needs_update=False)
     meta_data = from_yaml(Path(f"{pecha_path}/{pecha_id}.opf/meta.yml"))
     hfmls = get_hfml_text(f"{pecha_path}/{pecha_id}.opf/", text_id)
     index = from_yaml(Path(f"{pecha_path}/{pecha_id}.opf/index.yml"))

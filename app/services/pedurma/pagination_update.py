@@ -110,7 +110,7 @@ def update_pagination(text_id, pedurma_edit_notes, index, pecha_path):
 
 
 def update_text_pagination(text_id, pedurma_edit_notes):
-    pecha_path = download_pecha("P000792")
+    pecha_path = download_pecha("P000792", needs_update=False)
     index = from_yaml(Path(f"{pecha_path}/P000792.opf/index.yml"))
     for vol, new_pagination in update_pagination(
         text_id, pedurma_edit_notes, index, pecha_path
