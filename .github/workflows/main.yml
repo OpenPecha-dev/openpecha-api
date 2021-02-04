@@ -22,7 +22,7 @@ jobs:
           pip install pytest
       - name: Create dummy .env
         run: |
-          cat .env
+          touch .env
           echo 'GITHUB_OAUTH_CLIENT_ID="xxx"' >> .env
           echo 'GITHUB_OAUTH_CLIENT_SECRET="xxx"' >> .env
       - name: Run Test
