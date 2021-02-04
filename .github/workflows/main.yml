@@ -43,7 +43,9 @@ jobs:
             cd openpecha-services
             cd openpecha-editor
             git pull origin main
-            git status
+            cd ..
+            docker-compose up -d --build api-service
+            
     
     
    
