@@ -35,8 +35,8 @@ jobs:
     steps:
       - uses: appleboy/ssh-action@master
         with:
-          host: openpecha.org
-          username: tenzin
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPOLY_USERNAME }}
           key: ${{ secrets.DEPLOY_KEY }}
           port: ${{ secrets.DEPLOY_PORT }}
           script: |
