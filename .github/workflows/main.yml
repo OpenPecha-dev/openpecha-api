@@ -25,7 +25,7 @@ jobs:
           touch .env
           echo 'GITHUB_OAUTH_CLIENT_ID="xxx"' >> .env
           echo 'GITHUB_OAUTH_CLIENT_SECRET="xxx"' >> .env
-          echo 'BACKEND_CORS_ORIGINS=["http://localhost"]' .. .env
+          echo 'BACKEND_CORS_ORIGINS=["http://localhost"]' >> .env
       - name: Run Test
         run: pytest app/
 
