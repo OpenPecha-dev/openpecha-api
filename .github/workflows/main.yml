@@ -20,6 +20,11 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
+      - name: Create dummy .env
+        run: |
+          cat .env
+          echo 'GITHUB_OAUTH_CLIENT_ID="xxx"' >> .env
+          echo 'GITHUB_OAUTH_CLIENT_SECRET="xxx"' >> .env
       - name: Run Test
         run: pytest app/
 
