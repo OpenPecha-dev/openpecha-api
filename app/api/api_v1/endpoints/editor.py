@@ -2,9 +2,9 @@ from pathlib import Path
 from typing import List, Optional
 
 from fastapi import APIRouter, status
-from starlette.status import HTTP_201_CREATED
 
 from app import schemas
+from app.services.core import update_base_layer
 from app.services.pedurma.notes import get_pedurma_text_edit_notes
 from app.services.pedurma.pagination_update import update_text_pagination
 from app.services.pedurma_reconstruction.reconstruction import get_preview_page
@@ -64,3 +64,11 @@ def get_completed_texts(task_name: str):
     if not completed_texts_fn.is_file():
         return []
     return completed_texts_fn.read_text().splitlines()
+
+
+@router.post("/{pecha_id}/update/base")
+def update_base(
+    pecha_id: str, new_base: schemas.core.BaseLayer, layers: schemas.core.AnnLayer
+):
+    updated_layers = update_base_layer(pecha_id, new_base, layers)
+    return new_base, updated_layers
