@@ -75,21 +75,25 @@ def update_base(
 
 
 @router.post("/pechas")
-def create_pecha(
+async def create_pecha(
     title: str,
     author: str,
+    sku: str,
     subtitle: Optional[str] = "",
     collection: Optional[str] = "",
     publisher: Optional[str] = "",
+    text_file: UploadFile = File(...),
     front_cover_image: UploadFile = File(...),
     publication_data_image: UploadFile = File(...),
 ):
-    pecha_id = create_opf_pecha(
+    pecha_id = await create_opf_pecha(
+        text_file,
         title,
         subtitle,
         author,
         collection,
         publisher,
+        sku,
         front_cover_image,
         publication_data_image,
     )

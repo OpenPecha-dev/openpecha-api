@@ -1,24 +1,45 @@
 from fastapi import UploadFile
+from openpecha import formatters
 from openpecha.blupdate import Blupdate, update_ann_layer
+from openpecha.catalog.manager import CatalogManager
 from openpecha.cli import download_pecha
+from openpecha.formatters.empty import EmptyEbook
 
 from app.utils import save_upload_file_tmp
 
 
-def create_opf_pecha(
+async def create_opf_pecha(
+    text_file: UploadFile,
     title: str,
     subtitle: str,
     author: str,
     collection: str,
     publisher: str,
+    sku: str,
     front_cover_image: UploadFile,
     publication_data_image: UploadFile,
 ):
     front_cover_image_fn = save_upload_file_tmp(front_cover_image)
     publication_data_image_fn = save_upload_file_tmp(publication_data_image)
-    print(front_cover_image_fn)
-    print(publication_data_image_fn)
-    return "P000200"
+
+    metadata = {
+        "title": title,
+        "subtitle": subtitle,
+        "authors": [author],
+        "collection": collection,
+        "publisher": publisher,
+        "id": sku,
+        "cover": front_cover_image.filename,
+        "credit": publication_data_image.filename,
+    }
+
+    assets = {"image": [front_cover_image_fn, publication_data_image_fn]}
+
+    catalog = CatalogManager(formatter=EmptyEbook(metadata=metadata, assets=assets))
+    text = await text_file.read()
+    catalog.add_empty_item(text.decode("utf-8"))
+    catalog.update()
+    return catalog.formatter.pecha_path.name
 
 
 def get_old_base(pecha_id, base_id):
