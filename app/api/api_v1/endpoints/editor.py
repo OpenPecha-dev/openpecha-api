@@ -68,10 +68,17 @@ def get_completed_texts(task_name: str):
 
 @router.post("/{pecha_id}/update/base")
 def update_base(
-    pecha_id: str, new_base: schemas.core.BaseLayer, layers: schemas.core.AnnLayer
+    pecha_id: str,
+    updated_base: schemas.core.BaseLayer,
+    layers: List[schemas.core.AnnLayer],
 ):
-    updated_layers = update_base_layer(pecha_id, new_base, layers)
-    return new_base, updated_layers
+    updated_layers = update_base_layer(
+        pecha_id,
+        updated_base.id,
+        updated_base.content,
+        list(map(lambda x: x.dict(), layers)),
+    )
+    return updated_base, updated_layers
 
 
 @router.post("/pechas")

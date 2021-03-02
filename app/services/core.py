@@ -49,8 +49,8 @@ def get_old_base(pecha_id, base_id):
         return base_fn.read_text(encoding="utf-8")
 
 
-def update_base_layer(pecha_id, new_base, layers):
-    old_base = get_old_base(pecha_id, new_base.id)
+def update_base_layer(pecha_id, basename, new_base, layers):
+    old_base = get_old_base(pecha_id, basename)
     updater = Blupdate(old_base, new_base)
     for layer in layers:
         update_ann_layer(layer, updater)
