@@ -1,11 +1,17 @@
+import tempfile
+
 from fastapi import UploadFile
-from openpecha import formatters
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
 from openpecha.cli import download_pecha
 from openpecha.formatters.empty import EmptyEbook
+from openpecha.github_utils import create_release
+from openpecha.serializers import EpubSerializer
 
+from app.core.config import get_settings
 from app.utils import save_upload_file_tmp
+
+settings = get_settings()
 
 
 async def create_opf_pecha(
@@ -55,3 +61,18 @@ def update_base_layer(pecha_id, basename, new_base, layers):
     for layer in layers:
         update_ann_layer(layer, updater)
     return layers
+
+
+def create_export(pecha_id: str, branch):
+    pecha_path = download_pecha(pecha_id, branch=branch)
+    serializer = EpubSerializer(opf_path=pecha_path / f"{pecha_path.name}.opf")
+
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        export_fn = serializer.serialize(output_path=tmpdirname)
+        download_url = create_release(
+            pecha_id,
+            prerelease=True if branch == "review" else False,
+            asset_paths=[export_fn],
+            token=settings.GITHUB_TOKEN,
+        )
+    return download_url

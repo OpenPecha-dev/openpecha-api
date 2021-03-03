@@ -4,7 +4,7 @@ from typing import List, Optional
 from fastapi import APIRouter, File, UploadFile, status
 
 from app import schemas
-from app.services.core import create_opf_pecha, update_base_layer
+from app.services.core import create_export, create_opf_pecha, update_base_layer
 from app.services.pedurma.notes import get_pedurma_text_edit_notes
 from app.services.pedurma.pagination_update import update_text_pagination
 from app.services.pedurma_reconstruction.reconstruction import get_preview_page
@@ -105,3 +105,13 @@ async def create_pecha(
         publication_data_image,
     )
     return {"pecha_id": pecha_id}
+
+
+@router.get("/pechas/{pecha_id}/export")
+def export_pecha(pecha_id: str, branch: str = "master"):
+    # try:
+    download_link = create_export(pecha_id, branch)
+    # except Exception as e:
+    #     print(e)
+    # download_link = ""
+    return {"download_link": download_link}
