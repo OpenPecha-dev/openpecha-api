@@ -109,9 +109,5 @@ async def create_pecha(
 
 @router.get("/pechas/{pecha_id}/export")
 def export_pecha(pecha_id: str, branch: str = "master"):
-    # try:
     download_link = create_export(pecha_id, branch)
-    # except Exception as e:
-    #     print(e)
-    # download_link = ""
     return {"download_link": download_link}
