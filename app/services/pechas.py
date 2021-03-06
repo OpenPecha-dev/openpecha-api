@@ -4,6 +4,7 @@ from fastapi import UploadFile
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
 from openpecha.cli import download_pecha
+from openpecha.core.pecha import OpenPechaFS
 from openpecha.formatters.empty import EmptyEbook
 from openpecha.github_utils import create_release
 from openpecha.serializers import EpubSerializer
@@ -12,6 +13,12 @@ from app.core.config import get_settings
 from app.utils import save_upload_file_tmp
 
 settings = get_settings()
+
+
+def get_pecha(pecha_id):
+    pecha_path = download_pecha(pecha_id, branch="review")
+    pecha = OpenPechaFS(opf_path=pecha_path / f"{pecha_id}.opf")
+    return pecha
 
 
 async def create_opf_pecha(

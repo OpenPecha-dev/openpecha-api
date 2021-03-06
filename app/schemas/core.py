@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 
 class BaseLayer(BaseModel):
-    id: str
     content: str
 
 
