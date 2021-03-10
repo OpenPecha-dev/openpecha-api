@@ -15,8 +15,8 @@ from app.utils import save_upload_file_tmp
 settings = get_settings()
 
 
-def get_pecha(pecha_id, **kwargs):
-    pecha_path = download_pecha(pecha_id, branch="review", **kwargs)
+def get_pecha(pecha_id):
+    pecha_path = download_pecha(pecha_id, branch="review", needs_update=False)
     pecha = OpenPechaFS(opf_path=pecha_path / f"{pecha_id}.opf")
     return pecha
 
