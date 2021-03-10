@@ -1,6 +1,6 @@
-from typing import List, Optional
+from typing import Dict, List, Optional
 
-from fastapi import APIRouter, File, UploadFile, status
+from fastapi import APIRouter, File, HTTPException, UploadFile, status
 from openpecha.core.layer import Layer, LayersEnum
 
 from app import schemas
@@ -44,6 +44,12 @@ async def create_pecha(
     return {"pecha_id": pecha_id}
 
 
+@router.get("/{pecha_id}/components", response_model=Dict[str, List[LayersEnum]])
+def read_components(pecha_id: str):
+    pecha = get_pecha(pecha_id)
+    return pecha.components
+
+
 @router.get("/{pecha_id}/texts/{text_id}", response_model=schemas.Text)
 def read_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
     """
@@ -55,7 +61,7 @@ def read_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
 
 @router.get("/{pecha_id}/base/{base_name}", response_model=str)
 def read_base(pecha_id: str, base_name):
-    pecha = get_pecha(pecha_id)
+    pecha = get_pecha(pecha_id, needs_update=False)
     return pecha.get_base(base_name)
 
 
@@ -91,18 +97,17 @@ def update_base(
 
 @router.delete("/{pecha_id}/base/{base_name}", response_model=str)
 def delete_base(pecha_id: str, base_name: str):
-    pass
+    raise HTTPException(status_code=501, detail="Endpoint not functional yet")
 
 
 @router.get("/{pecha_id}/layers/{base_name}", response_model=List[Layer])
 def read_layers(pecha_id: str, base_name: str):
-    pecha = get_pecha(pecha_id)
-    pass
+    raise HTTPException(status_code=501, detail="Endpoint not functional yet")
 
 
 @router.get("/{pecha_id}/layers/{base_name}/{layer_name}", response_model=Layer)
 def read_layer(pecha_id: str, base_name, layer_name: str):
-    pecha = get_pecha(pecha_id)
+    pecha = get_pecha(pecha_id, needs_update=False)
     return pecha.get_layer(base_name, LayersEnum(layer_name))
 
 
@@ -124,7 +129,7 @@ def update_layer(pecha_id: str, base_name, layer_name: str, layer: Layer):
 
 @router.delete("/{pecha_id}/layers/{base_name}/{layer_name}", response_model=Layer)
 def delete_layer(pecha_id: str, base_name: str, layer_name):
-    pass
+    raise HTTPException(status_code=501, detail="Endpoint not functional yet")
 
 
 @router.get("/{pecha_id}/export/{branch}")
