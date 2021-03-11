@@ -1,9 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import BaseSettings
-from starlette import responses
-
-from app import schemas
 
 
 @pytest.mark.skip(reason="need mocking")

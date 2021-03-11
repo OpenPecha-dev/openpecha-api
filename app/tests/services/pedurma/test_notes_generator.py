@@ -3,7 +3,6 @@ from pathlib import Path
 import pytest
 import yaml
 
-from app.api.api_v1.endpoints.editor import pedurma_page_preview
 from app.schemas.pecha import PedurmaNoteEdit
 from app.services.pedurma.notes import (
     get_pedurma_edit_notes,
