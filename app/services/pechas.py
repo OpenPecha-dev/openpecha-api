@@ -42,8 +42,8 @@ async def create_opf_pecha(
         "collection": collection,
         "publisher": publisher,
         "id": sku,
-        "cover": front_cover_image.filename,
-        "credit": publication_data_image.filename,
+        "cover": front_cover_image_fn.name,
+        "credit": publication_data_image_fn.name,
     }
 
     assets = {"image": [front_cover_image_fn, publication_data_image_fn]}
@@ -71,7 +71,7 @@ def update_base_layer(pecha_id, basename, new_base, layers):
 
 
 def create_export(pecha_id: str, branch):
-    pecha_path = download_pecha(pecha_id, branch=branch)
+    pecha_path = download_pecha(pecha_id, branch=branch, needs_update=False)
     serializer = EpubSerializer(opf_path=pecha_path / f"{pecha_path.name}.opf")
 
     with tempfile.TemporaryDirectory() as tmpdirname:

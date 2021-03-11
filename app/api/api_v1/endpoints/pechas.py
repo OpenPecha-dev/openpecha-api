@@ -142,10 +142,8 @@ def update_layer(
     layer: Layer,
     user: schemas.core.User = Depends(deps.get_user),
 ):
-    print(user)
     pecha = get_pecha(pecha_id)
-    pecha.layers[base_name][LayersEnum(layer_name)] = layer
-    pecha.save_layers()
+    pecha.save_layer(base_name, layer_name, layer)
     return {"success": True}
 
 

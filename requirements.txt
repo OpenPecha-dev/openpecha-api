@@ -1,6 +1,6 @@
 fastapi>=0.62.0
 uvicorn==0.12.3
-openpecha==0.7.8
+openpecha==0.7.10
 environs==9.2.0
 python-multipart>=0.0.5
 antx
