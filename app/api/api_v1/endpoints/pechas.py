@@ -27,6 +27,7 @@ async def create_pecha(
     text_file: UploadFile = File(...),
     front_cover_image: UploadFile = File(...),
     publication_data_image: UploadFile = File(...),
+    user: schemas.core.User = Depends(deps.get_user),
 ):
     """
     Create new pecha
