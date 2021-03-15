@@ -12,7 +12,7 @@ log = logging.getLogger("unvicorn")
 
 class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
-    API_V1_VERSION: str = "0.2.0"
+    API_V1_VERSION: str = "0.2.1"
 
     PROJECT_NAME: str = "openpecha-api"
     ENVIRONMENT: str = env.str("ENVIRONMENT", "dev")  # dev, stage, prod
