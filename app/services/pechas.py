@@ -4,6 +4,7 @@ from fastapi import UploadFile
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
 from openpecha.cli import download_pecha
+from openpecha.core.layer import Layer
 from openpecha.core.pecha import OpenPechaFS
 from openpecha.formatters.empty import EmptyEbook
 from openpecha.github_utils import create_release
@@ -62,11 +63,19 @@ def get_old_base(pecha_id, base_id):
         return base_fn.read_text(encoding="utf-8")
 
 
-def update_base_layer(pecha_id, basename, new_base, layers):
-    old_base = get_old_base(pecha_id, basename)
+def update_base_layer(pecha_id, base_name, new_base, layers):
+    pecha = get_pecha(pecha_id)
+    old_base = pecha.get_base(base_name)
+    pecha.base[base_name] = new_base
+    pecha.save_base()
+
     updater = Blupdate(old_base, new_base)
     for layer in layers:
         update_ann_layer(layer, updater)
+        print(layer)
+        pecha.save_layer(
+            base_name, layer["annotation_type"].value, Layer.parse_obj(layer)
+        )
     return layers
 
 

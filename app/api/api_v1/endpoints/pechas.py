@@ -88,19 +88,16 @@ def update_base(
     pecha_id: str,
     base_name: str,
     updated_base: schemas.core.BaseLayer,
-    layers: List[schemas.core.AnnLayer],
+    layers: List[Layer],
     user: schemas.core.User = Depends(deps.get_user),
 ):
     """
     Update base and corresponding layers also updated.
     """
     updated_layers = update_base_layer(
-        pecha_id,
-        updated_base.id,
-        updated_base.content,
-        list(map(lambda x: x.dict(), layers)),
+        pecha_id, base_name, updated_base.content, list(map(lambda x: x.dict(), layers))
     )
-    return updated_base, updated_layers
+    return {"base": updated_base.content, "layers": updated_layers}
 
 
 @router.delete("/{pecha_id}/base/{base_name}", response_model=str)
