@@ -10,6 +10,8 @@ RUN : \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y \
     --no-install-recommends \
     libgl1-mesa-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/list/* \
     && :
 
 # install calibre
