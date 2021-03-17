@@ -72,7 +72,6 @@ def update_base_layer(pecha_id, base_name, new_base, layers):
     updater = Blupdate(old_base, new_base)
     for layer in layers:
         update_ann_layer(layer, updater)
-        print(layer)
         pecha.save_layer(
             base_name, layer["annotation_type"].value, Layer.parse_obj(layer)
         )
