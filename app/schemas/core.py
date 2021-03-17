@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class User(BaseModel):
     id: int
     username: str
-    email: str
+    email: Optional[str] = ""
 
 
 class BaseLayer(BaseModel):
