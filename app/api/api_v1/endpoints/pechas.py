@@ -2,6 +2,7 @@ from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from openpecha.core.layer import Layer, LayersEnum
+from openpecha.formatters import editor
 
 from app import schemas
 from app.api import deps
@@ -10,6 +11,7 @@ from app.services.pechas import (
     create_opf_pecha,
     get_pecha,
     update_base_layer,
+    update_pecha_with_editor_content,
 )
 from app.services.text_obj.texts import get_text_obj
 
@@ -163,3 +165,11 @@ def export_pecha(
 ):
     download_link = create_export(pecha_id, branch)
     return {"download_link": download_link}
+
+
+@router.put("/{pecha_id}/{base_name}/editor/")
+def update_pecha(
+    pecha_id: str, base_name: str, editor_content: schemas.pecha.EditorContent
+):
+    update_pecha_with_editor_content(pecha_id, base_name, editor_content.content)
+    return {"success": True}
