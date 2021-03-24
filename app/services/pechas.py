@@ -1,17 +1,16 @@
 import tempfile
 
 from fastapi import UploadFile
-from git.objects import base
+from openpecha import serializers
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
 from openpecha.cli import download_pecha
 from openpecha.core.layer import Layer
 from openpecha.core.pecha import OpenPechaFS
-from openpecha.formatters import editor
 from openpecha.formatters.editor import EditorParser
 from openpecha.formatters.empty import EmptyEbook
 from openpecha.github_utils import create_release
-from openpecha.serializers import EpubSerializer
+from openpecha.serializers import EditorSerializer, EpubSerializer
 
 from app.core.config import get_settings
 from app.utils import save_upload_file_tmp
@@ -104,3 +103,11 @@ def update_pecha_with_editor_content(pecha_id, base_name, editor_content):
     pecha.update_base(base_name, parser.base[base_name])
     for layer_name, layer in parser.layers[base_name].items():
         pecha.update_layer(base_name, layer_name, layer)
+
+
+def create_editor_content_from_pecha(pecha_id, base_name):
+    pecha = get_pecha(pecha_id)
+    serializer = EditorSerializer(pecha.opf_path)
+    for serialized_base_name, result in serializer.serialize():
+        if serialized_base_name == base_name:
+            return result
