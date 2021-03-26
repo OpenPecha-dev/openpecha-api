@@ -1,7 +1,6 @@
 import tempfile
 
 from fastapi import UploadFile
-from openpecha import serializers
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
 from openpecha.cli import download_pecha
