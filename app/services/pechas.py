@@ -84,7 +84,8 @@ def create_export(pecha_id: str, branch):
     serializer = EpubSerializer(opf_path=pecha_path / f"{pecha_path.name}.opf")
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        export_fn = serializer.serialize(output_path=tmpdirname)
+        toc_levels = {"1": "sabche"}
+        export_fn = serializer.serialize(toc_levels=toc_levels, output_path=tmpdirname)
         download_url = create_release(
             pecha_id,
             prerelease=True if branch == "review" else False,
