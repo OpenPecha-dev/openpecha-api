@@ -2,9 +2,11 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import BaseSettings
 
+from app.core.config import settings
+
 
 @pytest.mark.skip(reason="need mocking")
-def test_get_text(client: TestClient, settings: BaseSettings) -> None:
+def test_get_text(client: TestClient) -> None:
     pecha_id = "P000792"
     text_id = "T-1"
 

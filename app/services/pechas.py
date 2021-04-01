@@ -11,10 +11,8 @@ from openpecha.formatters.empty import EmptyEbook
 from openpecha.github_utils import create_release
 from openpecha.serializers import EditorSerializer, EpubSerializer
 
-from app.core.config import get_settings
+from app.core.config import settings
 from app.utils import save_upload_file_tmp
-
-settings = get_settings()
 
 
 def get_pecha(pecha_id):

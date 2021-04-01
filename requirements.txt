@@ -2,7 +2,10 @@ fastapi>=0.62.0
 uvicorn==0.12.3
 sqlalchemy==1.4.4
 openpecha==0.7.22
-environs==9.2.0
+python-dotenv==0.15.0
 python-multipart>=0.0.5
+psycopg2-binary==2.8.6
+alembic==1.5.8
+tenacity==7.0.0
 antx
 requests

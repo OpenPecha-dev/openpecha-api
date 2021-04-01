@@ -15,4 +15,4 @@ class Pecha(Base):
     author = Column(String, index=True)
     owner_id = Column(Integer, ForeignKey("user.id"))
     owner = relationship("User", back_populates="pechas")
-    collaborators = relationship("User", back_populates="pechas", nullable=True)
+    collaborators = relationship("User", back_populates="pechas")
