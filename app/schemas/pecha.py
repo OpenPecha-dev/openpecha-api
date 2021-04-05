@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Collection, List, Optional
 
 from pydantic import AnyHttpUrl, BaseModel
 
@@ -53,7 +53,12 @@ class BaseLayer(BaseModel):
 class PechaBase(BaseModel):
     id: Optional[str] = None
     title: Optional[str] = None
+    subtitle: Optional[str] = None
     author: Optional[str] = None
+    volume: Optional[str] = None
+    collection_title: Optional[str] = None
+    publisher: Optional[str] = None
+    source_id: Optional[str] = None
 
 
 class PechaCreate(PechaBase):
@@ -69,8 +74,8 @@ class PechaUpdate(PechaBase):
 class PechaInDBBase(PechaBase):
     id: str
     title: str
-    img: AnyHttpUrl
     owner_id: int
+    img: Optional[AnyHttpUrl] = None
 
     class Config:
         orm_mode = True
