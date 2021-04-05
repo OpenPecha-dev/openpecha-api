@@ -2,7 +2,6 @@ from typing import Any, Dict, Optional, Union
 
 from sqlalchemy.orm import Session
 
-from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
@@ -36,6 +35,9 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         #     return None
         # return user
         pass
+
+    def is_superuser(self, user: User) -> bool:
+        return user.is_superuser
 
 
 user = CRUDUser(User)
