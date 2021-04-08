@@ -52,7 +52,7 @@ async def create_opf_pecha(
     text = await text_file.read()
     catalog.add_empty_item(text.decode("utf-8"))
     catalog.update()
-    return catalog.formatter.pecha_path.name
+    return catalog.formatter.pecha_path.name, front_cover_image_fn
 
 
 def get_old_base(pecha_id, base_id):

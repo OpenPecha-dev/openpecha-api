@@ -20,16 +20,18 @@ def get_current_user(
     db: Session = Depends(get_db), token: str = Header(...)
 ) -> models.User:
     try:
-        user = Github(token).get_user()
+        gh_user = Github(token).get_user()
     except GithubException:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Could not validate credentials",
         )
-    user = crud.user.get(db, id=user.id)
+    user = crud.user.get(db, id=gh_user.id)
     if not user:
-        user = schemas.UserCreate(id=user.id, username=user.login, email=user.email)
-        crud.user.create(db, user)
+        user = schemas.UserCreate(
+            id=gh_user.id, username=gh_user.login, email=gh_user.email
+        )
+        crud.user.create(db, obj_in=user)
     return user
 
 

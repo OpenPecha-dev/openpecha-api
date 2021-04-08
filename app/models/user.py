@@ -13,4 +13,5 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String, unique=True, index=True, nullable=False)
+    is_superuser = Column(Boolean(), default=False)
     pechas = relationship("Pecha", back_populates="owner")

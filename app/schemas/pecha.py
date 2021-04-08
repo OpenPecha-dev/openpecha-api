@@ -53,12 +53,7 @@ class BaseLayer(BaseModel):
 class PechaBase(BaseModel):
     id: Optional[str] = None
     title: Optional[str] = None
-    subtitle: Optional[str] = None
-    author: Optional[str] = None
-    volume: Optional[str] = None
-    collection_title: Optional[str] = None
-    publisher: Optional[str] = None
-    source_id: Optional[str] = None
+    img: Optional[AnyHttpUrl] = None
 
 
 class PechaCreate(PechaBase):
