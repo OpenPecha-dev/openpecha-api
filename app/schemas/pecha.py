@@ -1,6 +1,8 @@
-from typing import List, Optional
+from typing import Collection, List, Optional
 
-from pydantic import BaseModel
+from pydantic import AnyHttpUrl, BaseModel
+
+from app.db.base_class import Base
 
 
 # Shared properties
@@ -42,3 +44,41 @@ class PedurmaNoteEdit(BaseModel):
 
 class EditorContent(BaseModel):
     content: str
+
+
+class BaseLayer(BaseModel):
+    content: str
+
+
+class PechaBase(BaseModel):
+    id: Optional[str] = None
+    title: Optional[str] = None
+    img: Optional[AnyHttpUrl] = None
+
+
+class PechaCreate(PechaBase):
+    id: str
+    title: str
+
+
+class PechaUpdate(PechaBase):
+    id: str
+    title: str
+
+
+class PechaInDBBase(PechaBase):
+    id: str
+    title: str
+    owner_id: int
+    img: Optional[AnyHttpUrl] = None
+
+    class Config:
+        orm_mode = True
+
+
+class Pecha(PechaInDBBase):
+    pass
+
+
+class PechaInDB(PechaInDBBase):
+    pass

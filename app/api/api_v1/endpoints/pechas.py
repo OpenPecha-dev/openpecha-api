@@ -1,9 +1,11 @@
+from logging import currentframe
 from typing import Dict, List, Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from openpecha.core.layer import Layer, LayersEnum
+from sqlalchemy.orm import Session
 
-from app import schemas
+from app import crud, schemas
 from app.api import deps
 from app.services.pechas import (
     create_editor_content_from_pecha,
@@ -18,6 +20,25 @@ from app.services.text_obj.texts import get_text_obj
 router = APIRouter()
 
 
+@router.get("/", response_model=List[schemas.pecha.Pecha])
+async def read_pecha(
+    db: Session = Depends(deps.get_db),
+    skip: int = 0,
+    limit: int = 100,
+    current_user: schemas.user.User = Depends(deps.get_current_user),
+):
+    """
+    Retrieve pechas.
+    """
+    if crud.user.is_superuser(current_user):
+        pechas = crud.item.get_multi(db, skip=skip, limit=limit)
+    else:
+        pechas = crud.pecha.get_multi_by_owner(
+            db=db, owner_id=current_user.id, skip=skip, limit=limit
+        )
+    return pechas
+
+
 @router.post("/")
 async def create_pecha(
     title: str,
@@ -29,12 +50,13 @@ async def create_pecha(
     text_file: UploadFile = File(...),
     front_cover_image: UploadFile = File(...),
     publication_data_image: UploadFile = File(...),
-    user: schemas.core.User = Depends(deps.get_user),
+    current_user: schemas.user.User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db),
 ):
     """
     Create new pecha
     """
-    pecha_id = await create_opf_pecha(
+    pecha_id, front_cover_image_fn = await create_opf_pecha(
         text_file,
         title,
         subtitle,
@@ -44,6 +66,14 @@ async def create_pecha(
         sku,
         front_cover_image,
         publication_data_image,
+    )
+    pecha_obj = {
+        "id": pecha_id,
+        "title": title,
+        "img": f"https://github.com/OpenPecha/{pecha_id}/raw/master/{pecha_id}.opf/assets/image/{front_cover_image_fn.name}",
+    }
+    pecha = crud.pecha.create_with_owner(
+        db=db, obj_in=pecha_obj, owner_id=current_user.id
     )
     return {"pecha_id": pecha_id}
 
@@ -73,8 +103,8 @@ def read_base(pecha_id: str, base_name):
 def create_base(
     pecha_id: str,
     base_name: str,
-    base: schemas.core.BaseLayer,
-    user: schemas.core.User = Depends(deps.get_user),
+    base: schemas.pecha.BaseLayer,
+    user: schemas.user.User = Depends(deps.get_current_user),
 ):
     """
     Create new base layer.
@@ -89,9 +119,9 @@ def create_base(
 def update_base(
     pecha_id: str,
     base_name: str,
-    updated_base: schemas.core.BaseLayer,
+    updated_base: schemas.pecha.BaseLayer,
     layers: List[Layer],
-    user: schemas.core.User = Depends(deps.get_user),
+    user: schemas.user.User = Depends(deps.get_current_user),
 ):
     """
     Update base and corresponding layers also updated.
@@ -104,7 +134,9 @@ def update_base(
 
 @router.delete("/{pecha_id}/base/{base_name}", response_model=str)
 def delete_base(
-    pecha_id: str, base_name: str, user: schemas.core.User = Depends(deps.get_user)
+    pecha_id: str,
+    base_name: str,
+    user: schemas.user.User = Depends(deps.get_current_user),
 ):
     raise HTTPException(status_code=501, detail="Endpoint not functional yet")
 
@@ -126,7 +158,7 @@ def create_layer(
     base_name: str,
     layer_name: str,
     layer: Layer,
-    user: schemas.core.User = Depends(deps.get_user),
+    user: schemas.user.User = Depends(deps.get_current_user),
 ):
     pecha = get_pecha(pecha_id)
     pecha.layers[base_name][LayersEnum(layer_name)] = layer
@@ -140,7 +172,7 @@ def update_layer(
     base_name,
     layer_name: str,
     layer: Layer,
-    user: schemas.core.User = Depends(deps.get_user),
+    user: schemas.user.User = Depends(deps.get_current_user),
 ):
     pecha = get_pecha(pecha_id)
     pecha.save_layer(base_name, layer_name, layer)
@@ -152,7 +184,7 @@ def delete_layer(
     pecha_id: str,
     base_name: str,
     layer_name,
-    user: schemas.core.User = Depends(deps.get_user),
+    user: schemas.user.User = Depends(deps.get_current_user),
 ):
     raise HTTPException(status_code=501, detail="Endpoint not functional yet")
 
@@ -161,7 +193,7 @@ def delete_layer(
 def export_pecha(
     pecha_id: str,
     branch: str = "master",
-    user: schemas.core.User = Depends(deps.get_user),
+    user: schemas.user.User = Depends(deps.get_current_user),
 ):
     download_link = create_export(pecha_id, branch)
     return {"download_link": download_link}
@@ -169,7 +201,9 @@ def export_pecha(
 
 @router.get("/{pecha_id}/{base_name}/editor/")
 def get_editor_content(
-    pecha_id: str, base_name: str, user: schemas.core.User = Depends(deps.get_user)
+    pecha_id: str,
+    base_name: str,
+    user: schemas.user.User = Depends(deps.get_current_user),
 ):
     return {"content": create_editor_content_from_pecha(pecha_id, base_name)}
 
@@ -179,11 +213,11 @@ def update_pecha(
     pecha_id: str,
     base_name: str,
     editor_content: schemas.pecha.EditorContent,
-    user: schemas.core.User = Depends(deps.get_user),
+    user: schemas.user.User = Depends(deps.get_current_user),
 ):
-    try:
-        update_pecha_with_editor_content(pecha_id, base_name, editor_content.content)
-    except Exception as e:
-        print(e)
-        return {"success": False}
+    # try:
+    update_pecha_with_editor_content(pecha_id, base_name, editor_content.content)
+    # except Exception as e:
+    #     print(e)
+    #     return {"success": False}
     return {"success": True}
