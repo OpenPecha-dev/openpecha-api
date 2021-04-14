@@ -8,7 +8,7 @@ class UserBase(BaseModel):
     id: int
     username: str
     email: Optional[str] = None
-    is_superuser: bool = False
+    is_superuser: Optional[bool] = False
 
 
 # Properties to receive via API on creation

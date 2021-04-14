@@ -6,20 +6,25 @@ authors = ["tenzin <ten13zin@gmail.com>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-python-dotenv = "^0.17.0"
 fastapi = "^0.63.0"
 uvicorn = "^0.13.4"
 openpecha = "^0.7.27"
 antx = "^0.1.5"
 python-multipart = "^0.0.5"
 SQLAlchemy = "^1.4.7"
-psycopg2 = "^2.8.6"
 tenacity = "^7.0.0"
+alembic = "^1.5.8"
+email-validator = "^1.1.2"
+raven = "^6.10.0"
+psycopg2-binary = "^2.8.6"
+celery = "4.x"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
 isort = "^5.8.0"
 pytest = "^6.2.3"
+pre-commit = "^2.12.0"
+python-dotenv = "^0.17.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
