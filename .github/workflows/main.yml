@@ -37,7 +37,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Build and push Docker image
+    - name: Build and push openpecha-api image
       uses: docker/build-push-action@v1
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
@@ -45,7 +45,15 @@ jobs:
         repository: openpecha/openpecha-api
         dockerfile: api.dockerfile
         tags: prod
-            
+        
+    - name: Build and push celeryworker image
+      uses: docker/build-push-action@v1
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        repository: openpecha/openpecha-api
+        dockerfile: celeryworker.dockerfile
+        tags: prod
     
     
    
