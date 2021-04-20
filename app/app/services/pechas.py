@@ -97,6 +97,7 @@ def update_pecha_with_editor_content(pecha_id, base_name, editor_content):
     parser = EditorParser()
     parser.parse(base_name, editor_content)
 
+    print(parser.layers)
     pecha = get_pecha(pecha_id)
     pecha.update_base(base_name, parser.base[base_name])
     for layer_name, layer in parser.layers[base_name].items():
