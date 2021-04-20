@@ -20,7 +20,7 @@ from app.services.text_obj.texts import get_text_obj
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.pecha.Pecha])
+@router.get("", response_model=List[schemas.pecha.Pecha])
 async def read_pecha(
     db: Session = Depends(deps.get_db),
     skip: int = 0,
@@ -39,7 +39,7 @@ async def read_pecha(
     return pechas
 
 
-@router.post("/")
+@router.post("")
 async def create_pecha(
     title: str,
     author: str,
@@ -199,7 +199,7 @@ def export_pecha(
     return {"download_link": download_link}
 
 
-@router.get("/{pecha_id}/{base_name}/editor/")
+@router.get("/{pecha_id}/{base_name}/editor")
 def get_editor_content(
     pecha_id: str,
     base_name: str,
@@ -208,7 +208,7 @@ def get_editor_content(
     return {"content": create_editor_content_from_pecha(pecha_id, base_name)}
 
 
-@router.put("/{pecha_id}/{base_name}/editor/")
+@router.put("/{pecha_id}/{base_name}/editor")
 def update_pecha(
     pecha_id: str,
     base_name: str,
