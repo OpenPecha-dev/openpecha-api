@@ -11,5 +11,4 @@ def get_github_access_token(code: str):
     Github oauth web application flow, get an access token for given code
     """
     response = security.get_github_access_token(code)
-    print(response)
     return response
