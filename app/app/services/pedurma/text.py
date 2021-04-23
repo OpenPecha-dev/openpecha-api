@@ -199,7 +199,7 @@ def serialize_text_obj(text):
     return text_hfml
 
 
-def get_text_obj(pecha_id, text_id):
+def get_text(pecha_id, text_id):
     pecha_path = download_pecha(pecha_id, needs_update=False)
     meta_data = from_yaml(Path(f"{pecha_path}/{pecha_id}.opf/meta.yml"))
     hfmls = get_hfml_text(f"{pecha_path}/{pecha_id}.opf/", text_id)
@@ -219,4 +219,4 @@ def get_text_obj(pecha_id, text_id):
 #     text_uuid, text_info = get_text_info(text_id, index)
 #     text_meta = get_meta_data(pecha_id, text_uuid, meta_data)
 #     hfmls = get_hfml_text(text_id, opf_path)
-#     text_obj = get_text_obj(hfmls, text_meta, opf_path)
+#     text_obj = get_text(hfmls, text_meta, opf_path)

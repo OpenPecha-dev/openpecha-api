@@ -15,7 +15,6 @@ from app.services.pechas import (
     update_base_layer,
     update_pecha_with_editor_content,
 )
-from app.services.text_obj.texts import get_text_obj
 
 router = APIRouter()
 
@@ -82,15 +81,6 @@ async def create_pecha(
 def read_components(pecha_id: str):
     pecha = get_pecha(pecha_id)
     return pecha.components
-
-
-@router.get("/{pecha_id}/texts/{text_id}", response_model=schemas.Text)
-def read_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
-    """
-    Redrieve text of the pecha
-    """
-    text = get_text_obj(pecha_id, text_id)
-    return text
 
 
 @router.get("/{pecha_id}/base/{base_name}", response_model=str)

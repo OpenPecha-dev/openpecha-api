@@ -6,9 +6,19 @@ from fastapi import APIRouter, status
 from app import schemas
 from app.services.pedurma.notes import get_pedurma_text_edit_notes
 from app.services.pedurma.pagination_update import update_text_pagination
+from app.services.pedurma.text import get_text
 from app.services.pedurma_reconstruction.reconstruction import get_preview_page
 
 router = APIRouter()
+
+
+@router.get("/{pecha_id}/texts/{text_id}", response_model=schemas.Text)
+def read_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
+    """
+    Retrieve text from pecha
+    """
+    text = get_text(pecha_id, text_id)
+    return text
 
 
 @router.post("/save")
