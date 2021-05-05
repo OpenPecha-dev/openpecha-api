@@ -2,12 +2,14 @@ from pathlib import Path
 from typing import List, Optional
 
 from fastapi import APIRouter, status
+from pedurma import (
+    get_pedurma_text_edit_notes,
+    get_preview_page,
+    update_text_pagination,
+)
+from pedurma.texts import get_text_obj
 
 from app import schemas
-from app.services.pedurma.notes import get_pedurma_text_edit_notes
-from app.services.pedurma.pagination_update import update_text_pagination
-from app.services.pedurma.text import get_text
-from app.services.pedurma_reconstruction.reconstruction import get_preview_page
 
 router = APIRouter()
 
@@ -17,7 +19,7 @@ def read_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
     """
     Retrieve text from pecha
     """
-    text = get_text(pecha_id, text_id)
+    text = get_text_obj(pecha_id, text_id)
     return text
 
 
@@ -36,7 +38,7 @@ def pedurma_page_preview(
     preview_page = get_preview_page(
         google_page, namsel_page, google_page_note, namsel_page_note
     )
-    return preview_page
+    return {"content": preview_page}
 
 
 @router.get("/{text_id}/notes", response_model=List[schemas.pecha.PedurmaNoteEdit])
