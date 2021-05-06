@@ -7,7 +7,7 @@ from pedurma import (
     get_preview_page,
     update_text_pagination,
 )
-from pedurma.texts import get_text_obj
+from pedurma.texts import get_derge_google_text_obj, get_text_obj
 
 from app import schemas
 
@@ -19,7 +19,10 @@ def read_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
     """
     Retrieve text from pecha
     """
-    text = get_text_obj(pecha_id, text_id)
+    if pecha_id in ["P000791", "P000793"]:
+        text = get_derge_google_text_obj(text_id)
+    else:
+        text = get_text_obj(pecha_id, text_id)
     return text
 
 
