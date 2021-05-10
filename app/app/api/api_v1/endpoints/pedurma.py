@@ -3,11 +3,13 @@ from typing import List, Optional
 
 from fastapi import APIRouter, status
 from pedurma import (
+    get_derge_google_text_obj,
     get_pedurma_text_edit_notes,
     get_preview_page,
+    get_text_obj,
+    save_text,
     update_text_pagination,
 )
-from pedurma.texts import get_derge_google_text_obj, get_text_obj
 
 from app import schemas
 
@@ -26,9 +28,10 @@ def read_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
     return text
 
 
-@router.post("/save")
-def save_text(text: schemas.Text):
-    return f"Text {text.id} saved!"
+@router.put("/{pecha_id}/texts/{text_id}")
+def update_text(pecha_id: str, text_id: str, text_obj: schemas.Text):
+    save_text(pecha_id, text_obj, needs_update=False)
+    return {"message": f"{text_id} saved successfully"}
 
 
 @router.post("/preview", response_model=schemas.PedurmaPreviewPage)
