@@ -6,12 +6,14 @@ from pedurma import (
     get_derge_google_text_obj,
     get_pedurma_text_edit_notes,
     get_preview_page,
+    get_preview_text,
     get_text_obj,
     save_text,
     update_text_pagination,
 )
 
 from app import schemas
+from app.services.pedurma import release_text_preview
 
 router = APIRouter()
 
@@ -45,6 +47,13 @@ def pedurma_page_preview(
         google_page, namsel_page, google_page_note, namsel_page_note
     )
     return {"content": preview_page}
+
+
+@router.get("/{text_id}/preview")
+def pedurma_page_preview(text_id: str):
+    text_preview = get_preview_text(text_id)
+    download_url = release_text_preview(text_id, text_preview)
+    return {"download_url": download_url}
 
 
 @router.get("/{text_id}/notes", response_model=List[schemas.pecha.PedurmaNoteEdit])

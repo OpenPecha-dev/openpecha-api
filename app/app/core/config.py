@@ -65,6 +65,8 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER_EMAIL: EmailStr  # github email
     USERS_OPEN_REGISTRATION: bool = False
 
+    PEDURMA_PECHA: str
+
     class Config:
         case_sensitive = True
         if os.getenv("INSTALL_DEV"):

@@ -1,8 +1,6 @@
-from typing import Collection, List, Optional
+from typing import Dict, List, Optional
 
 from pydantic import AnyHttpUrl, BaseModel
-
-from app.db.base_class import Base
 
 
 # Shared properties
@@ -31,6 +29,10 @@ class Text(BaseModel):
 
 class PedurmaPreviewPage(BaseModel):
     content: str
+
+
+class PedurmaPreviewText(BaseModel):
+    content: Dict[str, str]
 
 
 class PedurmaNoteEdit(BaseModel):
