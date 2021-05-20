@@ -1,5 +1,5 @@
 from logging import currentframe
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from openpecha.core.layer import Layer, LayersEnum
@@ -11,6 +11,7 @@ from app.services.pechas import (
     create_editor_content_from_pecha,
     create_export,
     create_opf_pecha,
+    delete_opf_pecha,
     get_pecha,
     update_base_layer,
     update_pecha_with_editor_content,
@@ -75,6 +76,26 @@ async def create_pecha(
         db=db, obj_in=pecha_obj, owner_id=current_user.id
     )
     return {"pecha_id": pecha_id}
+
+
+@router.delete("/{id}")
+async def delete_pecha(
+    *,
+    db: Session = Depends(deps.get_db),
+    id: str,
+    current_user: schemas.user.User = Depends(deps.get_current_user),
+) -> Any:
+    """
+    Delete a pecha
+    """
+    pecha = crud.pecha.get(db=db, id=id)
+    if not pecha:
+        raise HTTPException(status_code=404, detail="Pecha not found")
+    if pecha.owner_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Not enough Permission")
+    delete_opf_pecha(id)
+    pecha = crud.pecha.remove(db=db, id=id)
+    return pecha
 
 
 @router.get("/{pecha_id}/components", response_model=Dict[str, List[LayersEnum]])

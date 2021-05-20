@@ -8,7 +8,7 @@ from openpecha.core.layer import Layer
 from openpecha.core.pecha import OpenPechaFS
 from openpecha.formatters.editor import EditorParser
 from openpecha.formatters.empty import EmptyEbook
-from openpecha.github_utils import create_release
+from openpecha.github_utils import create_release, get_github_repo
 from openpecha.serializers import EditorSerializer, EpubSerializer
 
 from app.core.config import settings
@@ -109,3 +109,8 @@ def create_editor_content_from_pecha(pecha_id, base_name):
     for serialized_base_name, result in serializer.serialize():
         if serialized_base_name == base_name:
             return result
+
+
+def delete_opf_pecha(pecha_id: str):
+    repo = get_github_repo(pecha_id, "OpenPecha", settings.GITHUB_TOKEN)
+    repo.delete()
