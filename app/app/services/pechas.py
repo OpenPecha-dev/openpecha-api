@@ -101,6 +101,7 @@ def update_pecha_with_editor_content(pecha_id, base_name, editor_content):
     pecha.update_base(base_name, parser.base[base_name])
     for layer_name, layer in parser.layers[base_name].items():
         pecha.update_layer(base_name, layer_name, layer)
+    pecha.reset_layers(base_name, exclude=parser.layers[base_name])
 
 
 def create_editor_content_from_pecha(pecha_id, base_name):

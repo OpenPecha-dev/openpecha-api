@@ -2,7 +2,7 @@ from logging import currentframe
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from openpecha.core.layer import Layer, LayersEnum
+from openpecha.core.layer import Layer, LayerEnum
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -98,7 +98,7 @@ async def delete_pecha(
     return pecha
 
 
-@router.get("/{pecha_id}/components", response_model=Dict[str, List[LayersEnum]])
+@router.get("/{pecha_id}/components", response_model=Dict[str, List[LayerEnum]])
 def read_components(pecha_id: str):
     pecha = get_pecha(pecha_id)
     return pecha.components
@@ -160,7 +160,7 @@ def read_layers(pecha_id: str, base_name: str):
 @router.get("/{pecha_id}/layers/{base_name}/{layer_name}", response_model=Layer)
 def read_layer(pecha_id: str, base_name, layer_name: str):
     pecha = get_pecha(pecha_id)
-    return pecha.get_layer(base_name, LayersEnum(layer_name))
+    return pecha.get_layer(base_name, LayerEnum(layer_name))
 
 
 @router.post("/{pecha_id}/layers/{base_name}/{layer_name}", response_model=Layer)
@@ -172,7 +172,7 @@ def create_layer(
     user: schemas.user.User = Depends(deps.get_current_user),
 ):
     pecha = get_pecha(pecha_id)
-    pecha.layers[base_name][LayersEnum(layer_name)] = layer
+    pecha.layers[base_name][LayerEnum(layer_name)] = layer
     pecha.save_layers()
     return {"success": True}
 
