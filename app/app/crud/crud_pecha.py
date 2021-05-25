@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import update
 
 from app.crud.base import CRUDBase
 from app.models.pecha import Pecha
@@ -29,6 +30,15 @@ class CRUDPecha(CRUDBase[Pecha, PechaCreate, PechaUpdate]):
             .limit(limit)
             .all()
         )
+
+    def update(
+        self, db: Session, *, db_obj: Pecha, obj_in: PechaUpdate, owner_id: int
+    ) -> Pecha:
+        if isinstance(obj_in, dict):
+            update_data = obj_in
+        else:
+            update_data = obj_in.dict(exclude_unset=True)
+        return super().update(db, db_obj=db_obj, obj_in=update_data)
 
 
 pecha = CRUDPecha(Pecha)

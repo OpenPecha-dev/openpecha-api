@@ -1,10 +1,12 @@
+import shutil
 import tempfile
+from logging import shutdown
 
 from fastapi import UploadFile
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
 from openpecha.cli import download_pecha
-from openpecha.core.layer import Layer
+from openpecha.core.layer import Layer, MetaData
 from openpecha.core.pecha import OpenPechaFS
 from openpecha.formatters.editor import EditorParser
 from openpecha.formatters.empty import EmptyEbook
@@ -115,3 +117,16 @@ def create_editor_content_from_pecha(pecha_id, base_name):
 def delete_opf_pecha(pecha_id: str):
     repo = get_github_repo(pecha_id, "OpenPecha", settings.GITHUB_TOKEN)
     repo.delete()
+
+
+def update_pecha_assets(
+    pecha: OpenPechaFS, asset_type: str, asset_name: str, file_obj: UploadFile
+):
+    asset_type_dir = pecha.assets_path / asset_type
+    # delete the old asset
+    old_asset_fn = asset_type / pecha.meta.source_metadata[asset_name]
+    old_asset_fn.unlink()
+
+    new_asset_fn = save_upload_file_tmp(file_obj)
+    shutil.copyfile(str(new_asset_fn), str(asset_type_dir / new_asset_fn.name))
+    return new_asset_fn.name

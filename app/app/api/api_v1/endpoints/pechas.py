@@ -2,7 +2,9 @@ from logging import currentframe
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from openpecha.core.layer import Layer, LayerEnum
+from git.util import assure_directory_exists
+from gitdb.exc import ODBError
+from openpecha.core.layer import Layer, LayerEnum, MetaData
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -14,6 +16,7 @@ from app.services.pechas import (
     delete_opf_pecha,
     get_pecha,
     update_base_layer,
+    update_pecha_assets,
     update_pecha_with_editor_content,
 )
 
@@ -37,6 +40,14 @@ async def read_pecha(
             db=db, owner_id=current_user.id, skip=skip, limit=limit
         )
     return pechas
+
+
+def create_pecha_obj(pecha_id, title, image_fn):
+    return {
+        "id": pecha_id,
+        "title": title,
+        "img": f"https://github.com/OpenPecha/{pecha_id}/raw/master/{pecha_id}.opf/assets/image/{image_fn}",
+    }
 
 
 @router.post("")
@@ -67,11 +78,8 @@ async def create_pecha(
         front_cover_image,
         publication_data_image,
     )
-    pecha_obj = {
-        "id": pecha_id,
-        "title": title,
-        "img": f"https://github.com/OpenPecha/{pecha_id}/raw/master/{pecha_id}.opf/assets/image/{front_cover_image_fn.name}",
-    }
+
+    pecha_obj = create_pecha_obj(pecha_id, title, front_cover_image_fn.name)
     pecha = crud.pecha.create_with_owner(
         db=db, obj_in=pecha_obj, owner_id=current_user.id
     )
@@ -232,3 +240,53 @@ def update_pecha(
     #     print(e)
     #     return {"success": False}
     return {"success": True}
+
+
+@router.get("/{pecha_id}/metadata", response_model=MetaData)
+def read_metadata(*, pecha_id: str):
+    pecha = get_pecha(pecha_id)
+    pecha.meta.id
+    return pecha.meta
+
+
+@router.put("/{pecha_id}/metadata")
+def update_metadata(
+    *,
+    pecha_id: str,
+    metadata: MetaData,
+    front_cover_image: Optional[UploadFile] = File(...),
+    publication_data_image: Optional[UploadFile] = File(...),
+    db: Session = Depends(deps.get_db),
+    current_user: schemas.user.User = Depends(deps.get_current_user),
+):
+    pecha_db = crud.pecha.get(db, id=pecha_id)
+    if not pecha_db:
+        raise HTTPException(status_code=404, detail="Pecha not found")
+    if pecha_db.owner_id != current_user.id:
+        raise HTTPException(status_code=404, detail="Not enough Permission")
+
+    pecha_opf = get_pecha(pecha_id)
+
+    # check if metadata is updated
+    if pecha_opf.meta.id and pecha_opf.meta == metadata:
+        return pecha_db
+
+    # update metadata
+    pecha_opf.meta = metadata
+    # update assets if chagned
+    if front_cover_image.filename:
+        asset_fn = update_pecha_assets(pecha_opf, "image", "cover", front_cover_image)
+        pecha_opf.meta.source_metadata["cover"] = asset_fn
+    if publication_data_image.filename:
+        asset_fn = update_pecha_assets(
+            pecha_opf, "image", "credit", publication_data_image
+        )
+        pecha_opf.meta.source_metadata["credit"] = asset_fn
+    pecha_opf.save_meta()
+
+    pecha_obj = create_pecha_obj(
+        pecha_id, title=metadata.title, image_fn=pecha_opf.meta.source_metadata["cover"]
+    )
+
+    pecha_db = crud.pecha.update(db, db_obj=pecha_db, obj_in=pecha_obj)
+    return pecha_db
