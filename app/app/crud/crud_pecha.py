@@ -31,9 +31,7 @@ class CRUDPecha(CRUDBase[Pecha, PechaCreate, PechaUpdate]):
             .all()
         )
 
-    def update(
-        self, db: Session, *, db_obj: Pecha, obj_in: PechaUpdate, owner_id: int
-    ) -> Pecha:
+    def update(self, db: Session, *, db_obj: Pecha, obj_in: PechaUpdate) -> Pecha:
         if isinstance(obj_in, dict):
             update_data = obj_in
         else:

@@ -254,8 +254,8 @@ def update_metadata(
     *,
     pecha_id: str,
     metadata: MetaData,
-    front_cover_image: Optional[UploadFile] = File(...),
-    publication_data_image: Optional[UploadFile] = File(...),
+    # front_cover_image: Optional[UploadFile] = File(None),
+    # publication_data_image: Optional[UploadFile] = File(None),
     db: Session = Depends(deps.get_db),
     current_user: schemas.user.User = Depends(deps.get_current_user),
 ):
@@ -267,26 +267,27 @@ def update_metadata(
 
     pecha_opf = get_pecha(pecha_id)
 
-    # check if metadata is updated
+    # check if metadata is changed
     if pecha_opf.meta.id and pecha_opf.meta == metadata:
         return pecha_db
 
     # update metadata
-    pecha_opf.meta = metadata
+    pecha_opf._meta = metadata
     # update assets if chagned
-    if front_cover_image.filename:
-        asset_fn = update_pecha_assets(pecha_opf, "image", "cover", front_cover_image)
-        pecha_opf.meta.source_metadata["cover"] = asset_fn
-    if publication_data_image.filename:
-        asset_fn = update_pecha_assets(
-            pecha_opf, "image", "credit", publication_data_image
-        )
-        pecha_opf.meta.source_metadata["credit"] = asset_fn
+    # if front_cover_image.filename:
+    #     asset_fn = update_pecha_assets(pecha_opf, "image", "cover", front_cover_image)
+    #     pecha_opf.meta.source_metadata["cover"] = asset_fn
+    # if publication_data_image.filename:
+    #     asset_fn = update_pecha_assets(
+    #         pecha_opf, "image", "credit", publication_data_image
+    #     )
+    #     pecha_opf.meta.source_metadata["credit"] = asset_fn
     pecha_opf.save_meta()
 
     pecha_obj = create_pecha_obj(
-        pecha_id, title=metadata.title, image_fn=pecha_opf.meta.source_metadata["cover"]
+        pecha_id,
+        title=metadata.source_metadata["title"],
+        image_fn=pecha_opf.meta.source_metadata["cover"],
     )
-
     pecha_db = crud.pecha.update(db, db_obj=pecha_db, obj_in=pecha_obj)
     return pecha_db
