@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app import crud, schemas
 from app.api import deps
+from app.core.slack_gateway import slack_gateway
 from app.services.pechas import (
     create_editor_content_from_pecha,
     create_export,
@@ -83,7 +84,9 @@ async def create_pecha(
     pecha = crud.pecha.create_with_owner(
         db=db, obj_in=pecha_obj, owner_id=current_user.id
     )
-    return {"pecha_id": pecha_id}
+
+    slack_gateway.send_message(f"[Created] Pecha: {pecha.id}")
+    return {"pecha_id": pecha.id}
 
 
 @router.delete("/{id}")
