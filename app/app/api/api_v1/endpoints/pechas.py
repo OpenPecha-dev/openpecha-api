@@ -85,7 +85,9 @@ async def create_pecha(
         db=db, obj_in=pecha_obj, owner_id=current_user.id
     )
 
-    slack_gateway.send_message(f"[Created] Pecha: {pecha.id}")
+    slack_gateway.send_message(
+        "\N{party popper} " + f"new pecha {pecha.id} created by {current_user.username}"
+    )
     return {"pecha_id": pecha.id}
 
 
