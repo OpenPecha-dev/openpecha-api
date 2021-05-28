@@ -2,23 +2,29 @@ import shutil
 import tempfile
 from logging import shutdown
 
-from fastapi import UploadFile
+from fastapi import HTTPException, UploadFile
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
 from openpecha.cli import download_pecha
 from openpecha.core.layer import Layer, MetaData
 from openpecha.core.pecha import OpenPechaFS
+from openpecha.exceptions import PechaNotFound
 from openpecha.formatters.editor import EditorParser
 from openpecha.formatters.empty import EmptyEbook
 from openpecha.github_utils import create_release, get_github_repo
 from openpecha.serializers import EditorSerializer, EpubSerializer
 
 from app.core.config import settings
+from app.models.pecha import Pecha
 from app.utils import save_upload_file_tmp
 
 
 def get_pecha(pecha_id):
-    pecha_path = download_pecha(pecha_id, branch="review", needs_update=False)
+    try:
+        pecha_path = download_pecha(pecha_id, branch="review", needs_update=False)
+    except PechaNotFound:
+        raise HTTPException(status_code=404, detail="Pecha not found")
+
     pecha = OpenPechaFS(opf_path=pecha_path / f"{pecha_id}.opf")
     return pecha
 
