@@ -454,7 +454,7 @@ python-versions = "*"
 
 [[package]]
 name = "openpecha"
-version = "0.7.38"
+version = "0.7.39"
 description = "OpenPecha Toolkit allows state of the art for distributed standoff annotations on moving texts"
 category = "main"
 optional = false
@@ -468,6 +468,7 @@ GitPython = ">=3.1.0,<4.0"
 pydantic = "1.7.3"
 pyewts = ">=0.1.3,<1.0"
 PyGithub = ">=1.43.8,<2.0"
+pylibyaml = ">=0.1.0,<2.0"
 PyYAML = ">=5.0.0,<6.0"
 rdflib = ">=5.0.0,<6.0"
 requests = ">=2.22.0,<3.0"
@@ -494,7 +495,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "pedurma"
-version = "0.1.16"
+version = "0.1.17"
 description = "Pedurma Reconstruction functionalities"
 category = "main"
 optional = false
@@ -503,6 +504,7 @@ python-versions = ">=3.8"
 [package.dependencies]
 antx = ">=0.1.8,<1.0"
 openpecha = ">=0.7.31,<1.0"
+pylibyaml = ">=0.1.0,<1.0"
 
 [[package]]
 name = "pluggy"
@@ -596,6 +598,14 @@ python-versions = "*"
 crypto = ["cryptography (>=1.4)"]
 flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
 test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
+
+[[package]]
+name = "pylibyaml"
+version = "0.1.0"
+description = "Speed up PyYAML by automatically enabling LibYAML bindings."
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "pyparsing"
@@ -950,7 +960,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "b0c9b6f93e9dc76877159cc103000e359070efac32da3ada641ca49f92937675"
+content-hash = "d18d5887990004cf2aa28e243c5607767ccc0ff93ac45976e8e98d213a74cebb"
 
 [metadata.files]
 alembic = [
@@ -1191,8 +1201,8 @@ nodeenv = [
     {file = "nodeenv-1.6.0.tar.gz", hash = "sha256:3ef13ff90291ba2a4a7a4ff9a979b63ffdd00a464dbe04acf0ea6471517a4c2b"},
 ]
 openpecha = [
-    {file = "openpecha-0.7.38-py3-none-any.whl", hash = "sha256:f7b9d9d2441353f0bbe557bef8fcf9d999b2d5052986196f932d0abd81d7771b"},
-    {file = "openpecha-0.7.38.tar.gz", hash = "sha256:f9336afcdac5ed49097736da03db7a32a127062d10e205d019c6f3060a93eea5"},
+    {file = "openpecha-0.7.39-py3-none-any.whl", hash = "sha256:76f7f0b5e61e64e04f142e878f217bf9aab0fa28901862eebabba8297f3e03d7"},
+    {file = "openpecha-0.7.39.tar.gz", hash = "sha256:2a806af00a8d3a4b972f09a09bd846a6bcf2fc28040f0f7a00d3e323a9bebd25"},
 ]
 packaging = [
     {file = "packaging-20.9-py2.py3-none-any.whl", hash = "sha256:67714da7f7bc052e064859c05c595155bd1ee9f69f76557e21f051443c20947a"},
@@ -1203,8 +1213,8 @@ pathspec = [
     {file = "pathspec-0.8.1.tar.gz", hash = "sha256:86379d6b86d75816baba717e64b1a3a3469deb93bb76d613c9ce79edc5cb68fd"},
 ]
 pedurma = [
-    {file = "pedurma-0.1.16-py3-none-any.whl", hash = "sha256:0655aa77fdd2d37719d324b09b3acb297eb24ec6d6075846c7e1c69d4601cdc2"},
-    {file = "pedurma-0.1.16.tar.gz", hash = "sha256:abea8f75cdb31adccba8889ee2c6e5a1929b8214c2e503dc691f06f0c7e8b446"},
+    {file = "pedurma-0.1.17-py3-none-any.whl", hash = "sha256:9cc6d5b5695a38b10e1ad8ed13b7ef210e382586849c5eedbcbcf072dc1da13b"},
+    {file = "pedurma-0.1.17.tar.gz", hash = "sha256:be4283769188f638ae8f5ad9cc7926e0ec62d1c7a68a93972fc0b83fc0c36fe5"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
@@ -1289,6 +1299,9 @@ pygithub = [
 pyjwt = [
     {file = "PyJWT-1.7.1-py2.py3-none-any.whl", hash = "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e"},
     {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
+]
+pylibyaml = [
+    {file = "pylibyaml-0.1.0.tar.gz", hash = "sha256:3b58dea061903c04689e35fab63ec149f7cf5e82f0808bd3425fb3ab3950623e"},
 ]
 pyparsing = [
     {file = "pyparsing-2.4.7-py2.py3-none-any.whl", hash = "sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b"},
