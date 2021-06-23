@@ -1,8 +1,10 @@
+import json
+from enum import Enum
 from typing import Dict
 
+from antx.core import get_diffs, transfer
 from openpecha.config import BASE_PATH
 
-from app.schemas.pecha import Page
 from app.schemas.proofread import ProofreadPage
 
 
@@ -20,10 +22,37 @@ class ImageManager:
     """
 
     def __init__(self, base_path):
-        self.offset_info_path = base_path / "offset_info.json"
+        self.offset_info_fn = base_path / "offset_info.json"
+        self._offset_info = None
+        self.vol2imagegroup_fn = base_path / "vol2imagegroup.json"
+        self._vol2imagegroup = None
+        self.image_url_format = "https://iiif.bdrc.io/bdr:{imagegroup}::{filename}.jpg/full/max/0/default.jpg"
 
-    def get_image_url(self, vold_id: str, page_id: str):
-        return "https://iiif.bdrc.io/bdr:I1KG14011::I1KG140110100.jpg/full/max/0/default.jpg"
+    @property
+    def offset_info(self):
+        if self._offset_info:
+            return self._offset_info
+        return json.load(self.offset_info_fn.open())
+
+    @property
+    def vol2imagegroup(self):
+        if self._vol2imagegroup:
+            return self._vol2imagegroup
+        return json.load(self.vol2imagegroup_fn.open())
+
+    def __get_offset_image_num(self, page_id: str):
+        return page_id
+
+    def get_image_url(self, vol_id: str, page_id: str):
+        imagegroup = self.vol2imagegroup[vol_id]
+        filename = f"{imagegroup}{self.__get_offset_image_num(page_id)}"
+        return self.image_url_format.format(imagegroup=imagegroup, filename=filename)
+
+
+class PechaType(str, Enum):
+    transk = "transk"
+    google_ocr = "google_ocr"
+    derge = "derge"
 
 
 class Proofread:
@@ -52,8 +81,9 @@ class Proofread:
         pages = list_sorted_paths_name(self.base_path / self.transkribus / vol_id)
         return {"pages": pages}
 
-    def get_page(self, vol_id: str, page_id: str):
-        page_fn = self.base_path / self.transkribus / vol_id / f"{page_id}.txt"
+    def get_page(self, vol_id: str, page_id: str, pecha_id: str = None):
+        pecha_id = pecha_id if pecha_id else self.transkribus
+        page_fn = self.base_path / pecha_id / vol_id / f"{page_id}.txt"
         if not page_fn.is_file():
             return ""
         return page_fn.read_text()
@@ -62,5 +92,17 @@ class Proofread:
         image_url = self.image_manager.get_image_url(vol_id, page_id)
         return image_url
 
-    def get_diffs(self, vol_id: str, page_id: str, page: ProofreadPage):
-        pass
+    def get_diffs(
+        self, vol_id: str, page_id: str, page: ProofreadPage, diff_with: PechaType
+    ):
+        if diff_with == PechaType.google_ocr:
+            google_page_content = self.get_page(vol_id, page_id, self.google_ocr)
+            diffs = get_diffs(page.content, google_page_content)
+        elif diff_with == PechaType.derge:
+            derge_page_content = self.get_page(vol_id, page_id, self.derge)
+            diffs = get_diffs(page.content, derge_page_content)
+        else:
+            old_page_content = self.get_page(vol_id, page_id)
+            diffs = get_diffs(page.content, old_page_content)
+
+        return diffs

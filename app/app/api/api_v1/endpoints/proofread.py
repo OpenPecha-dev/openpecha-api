@@ -1,10 +1,8 @@
 import pydantic
 from fastapi import APIRouter
-from pydantic.types import PaymentCardNumber
 
-from app.schemas.pecha import Page
 from app.schemas.proofread import PageDiff, ProofreadPage
-from app.services.proofread import Proofread
+from app.services.proofread import PechaType, Proofread
 
 router = APIRouter()
 
@@ -35,7 +33,9 @@ def read_page(vol_id: str, page_id: str):
     return ProofreadPage(content=page_content, image_url=page_image_url)
 
 
-@router.get("/{vol_id}/{page_id}/diffs", response_model=PageDiff)
-def get_page_diffs(vol_id: str, page_id: str, page: ProofreadPage):
-    page_diffs = pudrak_kunchok_tsekpa_pr.get_diffs(vol_id, page_id, page)
+@router.post("/{vol_id}/{page_id}/diffs", response_model=PageDiff)
+def get_page_diffs(
+    vol_id: str, page_id: str, page: ProofreadPage, diff_with: PechaType
+):
+    page_diffs = pudrak_kunchok_tsekpa_pr.get_diffs(vol_id, page_id, page, diff_with)
     return PageDiff(diffs=page_diffs)
