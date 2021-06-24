@@ -33,6 +33,12 @@ def read_page(vol_id: str, page_id: str):
     return ProofreadPage(content=page_content, image_url=page_image_url)
 
 
+@router.put("/{vol_id}/{page_id}")
+def update_page(vol_id: str, page_id: str, page: ProofreadPage):
+    pudrak_kunchok_tsekpa_pr.save_page(vol_id, page_id, page)
+    return {"success": True}
+
+
 @router.post("/{vol_id}/{page_id}/diffs", response_model=PageDiff)
 def get_page_diffs(
     vol_id: str, page_id: str, page: ProofreadPage, diff_with: PechaType

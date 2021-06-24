@@ -1,8 +1,9 @@
 import json
 from enum import Enum
+from pathlib import Path
 from typing import Dict
 
-from antx.core import get_diffs, transfer
+from antx.core import get_diffs
 from openpecha.config import BASE_PATH
 
 from app.schemas.proofread import ProofreadPage
@@ -48,6 +49,9 @@ class ImageManager:
         filename = f"{imagegroup}{self.__get_offset_image_num(page_id)}"
         return self.image_url_format.format(imagegroup=imagegroup, filename=filename)
 
+    def save_offset(self, vol_id: str, page_id: str, image_url: str):
+        pass
+
 
 class PechaType(str, Enum):
     transk = "transk"
@@ -70,7 +74,7 @@ class Proofread:
         self.transkribus = transk
         self.google_ocr = google_ocr
         self.derge = derge
-        self.base_path = BASE_PATH / "proofread" / self.project_name
+        self.base_path: Path = BASE_PATH / "proofread" / self.project_name
         self.image_manager = ImageManager(self.base_path)
 
     def get_vols_metadata(self) -> Dict[str, str]:
@@ -87,6 +91,13 @@ class Proofread:
         if not page_fn.is_file():
             return ""
         return page_fn.read_text()
+
+    def save_page(self, vol_id: str, page_id: str, page: ProofreadPage):
+        page_fn = self.base_path / self.transkribus / vol_id / f"{page_id}.txt"
+        if not page_fn.is_file():
+            return
+        page_fn.write_text(page.content)
+        self.image_manager.save_offset(vol_id, page_id, page.image_url)
 
     def get_image_url(self, vol_id: str, page_id: str):
         image_url = self.image_manager.get_image_url(vol_id, page_id)
