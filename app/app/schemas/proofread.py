@@ -10,3 +10,7 @@ class ProofreadPage(BaseModel):
 
 class PageDiff(BaseModel):
     diffs: List[Tuple[int, str]]
+
+
+class IIIFImageUrl(BaseModel):
+    image_url: AnyHttpUrl

@@ -1,7 +1,7 @@
 import pydantic
 from fastapi import APIRouter
 
-from app.schemas.proofread import PageDiff, ProofreadPage
+from app.schemas.proofread import IIIFImageUrl, PageDiff, ProofreadPage
 from app.services.proofread import PechaType, Proofread
 
 router = APIRouter()
@@ -45,3 +45,20 @@ def get_page_diffs(
 ):
     page_diffs = pudrak_kunchok_tsekpa_pr.get_diffs(vol_id, page_id, page, diff_with)
     return PageDiff(diffs=page_diffs)
+
+
+@router.post("/images/next", response_model=IIIFImageUrl)
+def next_image(image: IIIFImageUrl):
+    next_image_url = pudrak_kunchok_tsekpa_pr.image_manager.next_image_url(
+        image.image_url
+    )
+    print(next_image_url)
+    return IIIFImageUrl(image_url=next_image_url)
+
+
+@router.post("/images/previous", response_model=IIIFImageUrl)
+def previous_image(image: IIIFImageUrl):
+    next_image_url = pudrak_kunchok_tsekpa_pr.image_manager.previous_image_url(
+        image.image_url
+    )
+    return IIIFImageUrl(image_url=next_image_url)

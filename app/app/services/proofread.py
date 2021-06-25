@@ -1,5 +1,6 @@
 import json
 from enum import Enum
+from os import stat
 from pathlib import Path
 from typing import Dict
 
@@ -27,7 +28,9 @@ class ImageManager:
         self._offset_info = None
         self.vol2imagegroup_fn = base_path / "vol2imagegroup.json"
         self._vol2imagegroup = None
-        self.image_url_format = "https://iiif.bdrc.io/bdr:{imagegroup}::{filename}.jpg/full/max/0/default.jpg"
+        self.image_url_format = (
+            "https://iiif.bdrc.io/bdr:{imagegroup}::{filename}/full/max/0/default.jpg"
+        )
 
     @property
     def offset_info(self):
@@ -46,11 +49,49 @@ class ImageManager:
 
     def get_image_url(self, vol_id: str, page_id: str):
         imagegroup = self.vol2imagegroup[vol_id]
-        filename = f"{imagegroup}{self.__get_offset_image_num(page_id)}"
+        filename = f"{imagegroup}{self.__get_offset_image_num(page_id)}.jpg"
         return self.image_url_format.format(imagegroup=imagegroup, filename=filename)
 
     def save_offset(self, vol_id: str, page_id: str, image_url: str):
         pass
+
+    @staticmethod
+    def __parse_image_url(image_url: str):
+        imagegroup_url_chunk, filename_url_chunk = image_url.split("::")
+        imagegroup = imagegroup_url_chunk.split(":")[-1]
+        filename = filename_url_chunk.split("/")[0]
+        return imagegroup, filename
+
+    @staticmethod
+    def __parse_filename(filename: str):
+        file_stem, file_ext = filename.split(".")
+        imagegroup = file_stem[:-4]
+        order = int(file_stem[-4:])
+        return imagegroup, order, file_ext
+
+    def __next_filename(self, filename: str):
+        imagegroup, order, file_ext = self.__parse_filename(filename)
+        return f"{imagegroup}{(order+1):04}.{file_ext}"
+
+    def __previous_filename(self, filename: str):
+        imagegroup, order, file_ext = self.__parse_filename(filename)
+        if order > 1:
+            order -= 1
+        return f"{imagegroup}{(order):04}.{file_ext}"
+
+    def next_image_url(self, image_url: str):
+        imagegroup, filename = self.__parse_image_url(image_url)
+        next_filename = self.__next_filename(filename)
+        return self.image_url_format.format(
+            imagegroup=imagegroup, filename=next_filename
+        )
+
+    def previous_image_url(self, image_url: str):
+        imagegroup, filename = self.__parse_image_url(image_url)
+        previous_filename = self.__previous_filename(filename)
+        return self.image_url_format.format(
+            imagegroup=imagegroup, filename=previous_filename
+        )
 
 
 class PechaType(str, Enum):
