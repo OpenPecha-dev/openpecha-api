@@ -1,8 +1,7 @@
 import json
 from enum import Enum
-from os import stat
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 from antx.core import get_diffs
 from openpecha.config import BASE_PATH
@@ -116,15 +115,40 @@ class Proofread:
         self.google_ocr = google_ocr
         self.derge = derge
         self.base_path: Path = BASE_PATH / "proofread" / self.project_name
+        self.metadata_fn: Path = self.base_path / "metadata.json"
+        self._metadata: Dict = {}
         self.image_manager = ImageManager(self.base_path)
 
-    def get_vols_metadata(self) -> Dict[str, str]:
-        vols = list_sorted_paths_name(self.base_path / self.transkribus)
-        return {"vols": vols}
+    def __load_metadata(self) -> None:
+        self._metadata = json.load(self.metadata_fn.open())
+
+    def __save_metadata(self) -> None:
+        json.dump(self._metadata, self.metadata_fn.open("w"))
+
+    def get_vols_metadata(self) -> List[str]:
+        if not self.metadata_fn.is_file():
+            vols = list_sorted_paths_name(self.base_path / self.transkribus)
+            self._metadata = {vol: {} for vol in vols}
+            self.__save_metadata()
+
+        if not self._metadata:
+            self.__load_metadata()
+
+        return list(self._metadata.keys())
 
     def get_pages_metadata(self, vol_id: str):
-        pages = list_sorted_paths_name(self.base_path / self.transkribus / vol_id)
-        return {"pages": pages}
+        if not self.metadata_fn.is_file():
+            self.get_vols_metadata()
+
+        if not self._metadata:
+            self.__load_metadata()
+
+        if not self._metadata[vol_id]:
+            pages = list_sorted_paths_name(self.base_path / self.transkribus / vol_id)
+            self._metadata[vol_id]["pages"] = {page: {} for page in pages}
+            self.__save_metadata()
+
+        return list(self._metadata[vol_id]["pages"].keys())
 
     def get_page(self, vol_id: str, page_id: str, pecha_id: str = None):
         pecha_id = pecha_id if pecha_id else self.transkribus
