@@ -5,6 +5,7 @@ from typing import Dict, List
 
 from antx.core import get_diffs
 from openpecha.config import BASE_PATH
+from pydantic.main import BaseModel
 
 from app.schemas.proofread import ProofreadPage
 
@@ -17,14 +18,106 @@ def list_sorted_paths_name(path):
     return path2names(sorted((path.iterdir())))
 
 
+class PechaType(str, Enum):
+    transk = "transk"
+    google_ocr = "google_ocr"
+    derge = "derge"
+
+
+class Metadata:
+    """
+    {
+        "v001": {
+            "pages": {
+                "0001": {
+                    "revision": 1,
+                    "image_url": https://...,
+                    "offset": 10
+                },
+            },
+            "imagegroup": "I1KG14011"
+        }
+    }
+    """
+
+    def __init__(self, base_path: Path, transk: str):
+        self.transkribus = transk
+        self.base_path: Path = base_path
+        self.metadata_fn: Path = self.base_path / "metadata.json"
+        self._metadata: Dict = None
+
+    def __load_metadata(self) -> None:
+        self._metadata = json.load(self.metadata_fn.open())
+
+    def __save_metadata(self) -> None:
+        json.dump(self._metadata, self.metadata_fn.open("w"))
+
+    def get_vols(self) -> List[str]:
+        if not self.metadata_fn.is_file():
+            vols = list_sorted_paths_name(self.base_path / self.transkribus)
+            self._metadata = {vol: {} for vol in vols}
+            self.__save_metadata()
+
+        if not self._metadata:
+            self.__load_metadata()
+
+        return list(self._metadata.keys())
+
+    def get_pages(self, vol_id: str) -> List[str]:
+        if not self.metadata_fn.is_file():
+            self.get_vols()
+
+        if not self._metadata:
+            self.__load_metadata()
+
+        if not self._metadata[vol_id]:
+            pages = list_sorted_paths_name(self.base_path / self.transkribus / vol_id)
+            self._metadata[vol_id]["pages"] = {page: {} for page in pages}
+            self.__save_metadata()
+
+        return self._metadata[vol_id]["pages"]
+
+    def __increment_page_revision(self, page) -> int:
+        print("revision", page)
+        if "revision" not in page:
+            return 1
+        return page["revision"] + 1
+
+    def __create_page(self, image_url, offset):
+        return {"revision": 0, "image_url": image_url, "offset": offset}
+
+    def save_page(self, vol_id: str, page_id: str, image_url: str, offset=None):
+        if (
+            page_id not in self._metadata[vol_id]["pages"]
+            or not self._metadata[vol_id]["pages"][page_id]
+        ):
+            self._metadata[vol_id]["pages"][page_id] = self.__create_page(
+                image_url, offset
+            )
+            self.__save_metadata()
+            return
+
+        page = self._metadata[vol_id]["pages"][page_id]
+        page["revision"] = self.__increment_page_revision(page)
+        page["image_url"] = image_url
+        page["offset"] = offset
+        self.__save_metadata()
+
+    def get_offset(self, vol_id: str, page_id: str) -> int:
+        print(self._metadata[vol_id]["pages"][page_id])
+        if "offset" not in self._metadata[vol_id]["pages"][page_id]:
+            return 0
+
+        return self._metadata[vol_id]["pages"][page_id]["offset"]
+
+
 class ImageManager:
     """
     Issue correct image to the specific page text
     """
 
-    def __init__(self, base_path):
-        self.offset_info_fn = base_path / "offset_info.json"
-        self._offset_info = None
+    def __init__(self, base_path, metadata: Metadata):
+        self.metadata = metadata
         self.vol2imagegroup_fn = base_path / "vol2imagegroup.json"
         self._vol2imagegroup = None
         self.image_url_format = (
@@ -32,27 +125,25 @@ class ImageManager:
         )
 
     @property
-    def offset_info(self):
-        if self._offset_info:
-            return self._offset_info
-        return json.load(self.offset_info_fn.open())
-
-    @property
     def vol2imagegroup(self):
         if self._vol2imagegroup:
             return self._vol2imagegroup
         return json.load(self.vol2imagegroup_fn.open())
 
-    def __get_offset_image_num(self, page_id: str):
-        return page_id
+    def __get_image_order(self, vol_id: str, page_id: str):
+        print(self.metadata.get_offset(vol_id, page_id))
+        return int(page_id) + self.metadata.get_offset(vol_id, page_id)
 
     def get_image_url(self, vol_id: str, page_id: str):
         imagegroup = self.vol2imagegroup[vol_id]
-        filename = f"{imagegroup}{self.__get_offset_image_num(page_id)}.jpg"
+        filename = f"{imagegroup}{self.__get_image_order(vol_id, page_id):04}.jpg"
+        print(filename)
         return self.image_url_format.format(imagegroup=imagegroup, filename=filename)
 
-    def save_offset(self, vol_id: str, page_id: str, image_url: str):
-        pass
+    def get_offset(self, vol_id: str, page_id: str, image_url: str):
+        _, filename = self.__parse_image_url(image_url)
+        _, image_order, _ = self.__parse_filename(filename)
+        return image_order - int(page_id)
 
     @staticmethod
     def __parse_image_url(image_url: str):
@@ -93,12 +184,6 @@ class ImageManager:
         )
 
 
-class PechaType(str, Enum):
-    transk = "transk"
-    google_ocr = "google_ocr"
-    derge = "derge"
-
-
 class Proofread:
     """
     Proofread class prepare and serve pages to be proof read.
@@ -109,48 +194,22 @@ class Proofread:
         derge (str): derge pecha id
     """
 
-    def __init__(self, project_name, transk, google_ocr, derge):
+    def __init__(self, project_name: str, transk: str, google_ocr: str, derge: str):
         self.project_name = project_name
         self.transkribus = transk
         self.google_ocr = google_ocr
         self.derge = derge
         self.base_path: Path = BASE_PATH / "proofread" / self.project_name
-        self.metadata_fn: Path = self.base_path / "metadata.json"
-        self._metadata: Dict = {}
-        self.image_manager = ImageManager(self.base_path)
-
-    def __load_metadata(self) -> None:
-        self._metadata = json.load(self.metadata_fn.open())
-
-    def __save_metadata(self) -> None:
-        json.dump(self._metadata, self.metadata_fn.open("w"))
+        self.metadata = Metadata(self.base_path, self.transkribus)
+        self.image_manager = ImageManager(self.base_path, self.metadata)
 
     def get_vols_metadata(self) -> List[str]:
-        if not self.metadata_fn.is_file():
-            vols = list_sorted_paths_name(self.base_path / self.transkribus)
-            self._metadata = {vol: {} for vol in vols}
-            self.__save_metadata()
+        return self.metadata.get_vols()
 
-        if not self._metadata:
-            self.__load_metadata()
+    def get_pages_metadata(self, vol_id: str) -> List[str]:
+        return self.metadata.get_pages(vol_id)
 
-        return list(self._metadata.keys())
-
-    def get_pages_metadata(self, vol_id: str):
-        if not self.metadata_fn.is_file():
-            self.get_vols_metadata()
-
-        if not self._metadata:
-            self.__load_metadata()
-
-        if not self._metadata[vol_id]:
-            pages = list_sorted_paths_name(self.base_path / self.transkribus / vol_id)
-            self._metadata[vol_id]["pages"] = {page: {} for page in pages}
-            self.__save_metadata()
-
-        return list(self._metadata[vol_id]["pages"].keys())
-
-    def get_page(self, vol_id: str, page_id: str, pecha_id: str = None):
+    def get_page(self, vol_id: str, page_id: str, pecha_id: str = None) -> str:
         pecha_id = pecha_id if pecha_id else self.transkribus
         page_fn = self.base_path / pecha_id / vol_id / f"{page_id}.txt"
         if not page_fn.is_file():
@@ -162,9 +221,10 @@ class Proofread:
         if not page_fn.is_file():
             return
         page_fn.write_text(page.content)
-        self.image_manager.save_offset(vol_id, page_id, page.image_url)
+        offset = self.image_manager.get_offset(vol_id, page_id, page.image_url)
+        self.metadata.save_page(vol_id, page_id, page.image_url, offset=offset)
 
-    def get_image_url(self, vol_id: str, page_id: str):
+    def get_image_url(self, vol_id: str, page_id: str) -> str:
         image_url = self.image_manager.get_image_url(vol_id, page_id)
         return image_url
 
