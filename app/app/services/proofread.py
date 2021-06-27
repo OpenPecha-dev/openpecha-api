@@ -78,7 +78,6 @@ class Metadata:
         return self._metadata[vol_id]["pages"]
 
     def __increment_page_revision(self, page) -> int:
-        print("revision", page)
         if "revision" not in page:
             return 1
         return page["revision"] + 1
@@ -103,10 +102,24 @@ class Metadata:
         page["offset"] = offset
         self.__save_metadata()
 
+    @staticmethod
+    def __int2page_id(n: int) -> str:
+        return f"{n:04}"
+
+    def __get_previous_offset(self, vol_id: str, page_id: str) -> int:
+        prev_page = {}
+        prev_page_id = page_id
+        while "offset" not in prev_page:
+            prev_page_id = self.__int2page_id(int(prev_page_id) - 1)
+            print(prev_page_id)
+            if prev_page_id == "0000":
+                return 0
+            prev_page = self._metadata[vol_id]["pages"][prev_page_id]
+        return prev_page["offset"]
+
     def get_offset(self, vol_id: str, page_id: str) -> int:
-        print(self._metadata[vol_id]["pages"][page_id])
         if "offset" not in self._metadata[vol_id]["pages"][page_id]:
-            return 0
+            return self.__get_previous_offset(vol_id, page_id)
 
         return self._metadata[vol_id]["pages"][page_id]["offset"]
 
@@ -131,13 +144,11 @@ class ImageManager:
         return json.load(self.vol2imagegroup_fn.open())
 
     def __get_image_order(self, vol_id: str, page_id: str):
-        print(self.metadata.get_offset(vol_id, page_id))
         return int(page_id) + self.metadata.get_offset(vol_id, page_id)
 
     def get_image_url(self, vol_id: str, page_id: str):
         imagegroup = self.vol2imagegroup[vol_id]
         filename = f"{imagegroup}{self.__get_image_order(vol_id, page_id):04}.jpg"
-        print(filename)
         return self.image_url_format.format(imagegroup=imagegroup, filename=filename)
 
     def get_offset(self, vol_id: str, page_id: str, image_url: str):
