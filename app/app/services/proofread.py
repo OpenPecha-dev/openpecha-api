@@ -47,6 +47,8 @@ class Metadata:
         self._metadata: Dict = None
 
     def __load_metadata(self) -> None:
+        if self._metadata:
+            return
         self._metadata = json.load(self.metadata_fn.open())
 
     def __save_metadata(self) -> None:
@@ -86,6 +88,7 @@ class Metadata:
         return {"revision": 0, "image_url": image_url, "offset": offset}
 
     def save_page(self, vol_id: str, page_id: str, image_url: str, offset=None):
+        self.__load_metadata()
         if (
             page_id not in self._metadata[vol_id]["pages"]
             or not self._metadata[vol_id]["pages"][page_id]
@@ -118,6 +121,7 @@ class Metadata:
         return prev_page["offset"]
 
     def get_offset(self, vol_id: str, page_id: str) -> int:
+        self.__load_metadata()
         if "offset" not in self._metadata[vol_id]["pages"][page_id]:
             return self.__get_previous_offset(vol_id, page_id)
 
