@@ -114,7 +114,6 @@ class Metadata:
         prev_page_id = page_id
         while "offset" not in prev_page:
             prev_page_id = self.__int2page_id(int(prev_page_id) - 1)
-            print(prev_page_id)
             if prev_page_id == "0000":
                 return 0
             prev_page = self._metadata[vol_id]["pages"][prev_page_id]
