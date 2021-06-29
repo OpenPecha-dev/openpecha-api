@@ -20,6 +20,7 @@ celery = "4.x"
 openpecha = "^0.7.39"
 pedurma = "^0.1.17"
 sentry-sdk = "^1.1.0"
+botok = "^0.8.7"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"

@@ -5,9 +5,10 @@ from typing import Dict, List
 
 from antx.core import get_diffs
 from openpecha.config import BASE_PATH
-from pydantic.main import BaseModel
 
 from app.schemas.proofread import ProofreadPage
+
+from .diff import Diff
 
 
 def path2names(paths):
@@ -247,12 +248,12 @@ class Proofread:
     ):
         if diff_with == PechaType.google_ocr:
             google_page_content = self.get_page(vol_id, page_id, self.google_ocr)
-            diffs = get_diffs(page.content, google_page_content)
+            diff = Diff(page.content, google_page_content)
         elif diff_with == PechaType.derge:
             derge_page_content = self.get_page(vol_id, page_id, self.derge)
-            diffs = get_diffs(page.content, derge_page_content)
+            diff = Diff(page.content, derge_page_content)
         else:
             old_page_content = self.get_page(vol_id, page_id)
-            diffs = get_diffs(page.content, old_page_content)
+            diff = Diff(page.content, old_page_content)
 
-        return diffs
+        return diff.compute()
