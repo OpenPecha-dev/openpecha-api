@@ -17,13 +17,40 @@ class Diff:
     def __init__(self, text1, text2):
         self.text1 = text1
         self.text2 = text2
+        self.sub_char_types = [
+            "SKRT_SUB_CONS",
+            "VOW",
+            "NFC",
+            "SKRT_VOW",
+            "IN_SYL_MARK",
+            "IN_SYL_MARK",
+            "KRT_LONG_VOW",
+            "SKRT_SUB_CONS",
+            "SUB_CONS",
+            "IN_SYL_MARK",
+        ]
 
     def __get_type(self, char):
         b = BoString(char)
         return b.get_categories()[0]
 
-    def __handle_no_width_char(self, diffs):
-        """attach no-width char to previous char.
+    def __is_sub_char(self, char):
+        return self.__get_type(char) in self.sub_char_types
+
+    def __get_last_mingshi(self, text):
+        """Return last mingshi of text."""
+        mighshi = ""
+        for char in reversed(text):
+            if self.__is_sub_char(char):
+                mighshi += char
+            else:
+                mighshi += char
+                break
+
+        return "".join(reversed(mighshi))
+
+    def __handle_sub_char(self, diffs):
+        """attach sub char to previous char.
 
         Examples no-width char from botok string categories:
             0F71,—ཱ—,SKRT_SUB_CONS
@@ -38,35 +65,23 @@ class Diff:
             0FB2,—ྲ—,SUB_CONS
             —༵—,IN_SYL_MARK
         """
-        no_width_chars_types = [
-            "SKRT_SUB_CONS",
-            "VOW",
-            "NFC",
-            "SKRT_VOW",
-            "IN_SYL_MARK",
-            "IN_SYL_MARK",
-            "KRT_LONG_VOW",
-            "SKRT_SUB_CONS",
-            "SUB_CONS",
-            "IN_SYL_MARK",
-        ]
         diffs = list(diffs)
         for i in range(len(diffs)):
             op, chunk = diffs[i]
-            if len(chunk) == 1:
-                if self.__get_type(chunk) in no_width_chars_types:
-                    pre_op, pre_chunk = diffs[i - 1]
+            if self.__is_sub_char(chunk[0]):
+                pre_op, pre_chunk = diffs[i - 1]
 
-                    # add previous chunk's last char to current chunk
-                    chunk = pre_chunk[-1] + chunk
-                    diffs[i] = (op, chunk)
+                # add previous chunk's last mingshi to current chunk
+                pre_chunk_last_mingshi = self.__get_last_mingshi(pre_chunk)
+                chunk = pre_chunk_last_mingshi + chunk
+                diffs[i] = (op, chunk)
 
-                    # remove last char from previous chunk
-                    diffs[i - 1] = (pre_op, pre_chunk[:-1])
+                # remove last mingshi from previous chunk
+                diffs[i - 1] = (pre_op, pre_chunk[: -len(pre_chunk_last_mingshi)])
 
         return diffs
 
     def compute(self):
         diffs = get_diffs(self.text1, self.text2)
-        diffs = self.__handle_no_width_char(diffs)
+        diffs = self.__handle_sub_char(diffs)
         return diffs
