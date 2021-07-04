@@ -3,7 +3,6 @@ from typing import List, Optional
 
 from fastapi import APIRouter, status
 from pedurma import (
-    get_derge_google_text_obj,
     get_pedurma_text_edit_notes,
     get_preview_page,
     get_preview_text,
@@ -23,10 +22,7 @@ def read_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
     """
     Retrieve text from pecha
     """
-    if pecha_id in ["P000791", "P000793"]:
-        text = get_derge_google_text_obj(text_id)
-    else:
-        text = get_text_obj(pecha_id, text_id)
+    text = get_text_obj(pecha_id, text_id)
     return text
 
 
