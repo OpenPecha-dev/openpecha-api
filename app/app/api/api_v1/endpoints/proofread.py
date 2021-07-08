@@ -8,9 +8,9 @@ router = APIRouter()
 
 pudrak_kunchok_tsekpa_pr = Proofread(
     project_name="pudrak_kunchok_tsekpa",
-    transk="P000789",
-    google_ocr="P000005",
-    derge="P000001",
+    transk="trans",
+    google_ocr="trans_google",
+    derge="trans_derge",
 )
 
 
