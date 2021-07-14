@@ -12,7 +12,7 @@ from pedurma import (
 )
 
 from app import schemas
-from app.services.pedurma import release_text_preview
+from app.services.pedurma import create_text_release
 
 router = APIRouter()
 
@@ -47,8 +47,7 @@ def pedurma_page_preview(
 
 @router.get("/{text_id}/preview")
 def pedurma_page_preview(text_id: str):
-    text_preview = get_preview_text(text_id)
-    download_url = release_text_preview(text_id, text_preview)
+    download_url = create_text_release(text_id)
     return {"download_url": download_url}
 
 
