@@ -1,17 +1,19 @@
 from pathlib import Path
 from typing import List, Optional
 
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 from pedurma import (
+    PageNumMissing,
     get_pedurma_text_edit_notes,
     get_preview_page,
-    get_preview_text,
     get_text_obj,
     save_text,
     update_text_pagination,
 )
 
 from app import schemas
+from app.models.pecha import Pecha
+from app.schemas.pecha import PedurmaPreviewPage
 from app.services.pedurma import create_text_release
 
 router = APIRouter()
@@ -39,10 +41,13 @@ def pedurma_page_preview(
     namsel_page: schemas.Page,
     namsel_page_note: schemas.NotesPage,
 ):
-    preview_page = get_preview_page(
-        google_page, namsel_page, google_page_note, namsel_page_note
-    )
-    return {"content": preview_page}
+    try:
+        preview_page = get_preview_page(
+            google_page, namsel_page, google_page_note, namsel_page_note
+        )
+    except PageNumMissing:
+        raise HTTPException(status_code=422, detail="page number is missing in notes")
+    return PedurmaPreviewPage(content=preview_page)
 
 
 @router.get("/{text_id}/preview")
