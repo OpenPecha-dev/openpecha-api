@@ -1,3 +1,5 @@
+import pytest
+
 from app.services.diff import Diff
 
 
@@ -23,3 +25,28 @@ def test_triplet_mingshi_only_last_sub_missing():
     diffs = differ.compute()
 
     assert diffs == [(0, "སངས་"), (-1, "རྒྱ"), (0, "ས་")]
+
+
+def test_bug_1():
+    differ = Diff("བསྒྲུབས་", "བསྒྱུབས་")
+
+    diffs = differ.compute()
+
+    assert diffs == [(0, "བ"), (-1, "སྒྲུ"), (1, "སྒྱུ"), (0, "བས་")]
+
+
+def test_bug_2():
+    differ = Diff("སྲུལ", "སྲལ")
+
+    diffs = differ.compute()
+
+    assert diffs == [(0, ""), (-1, "སྲུ"), (0, "ལ")]
+
+
+@pytest.mark.skip()
+def test_bug_3():
+    differ = Diff("སྡོགས", "སྩོགས")
+
+    diffs = differ.compute()
+
+    assert diffs == [(0, ""), (-1, "སྲུ"), (0, "ལ")]

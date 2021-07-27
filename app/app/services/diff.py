@@ -1,3 +1,5 @@
+import re
+
 from antx.core import get_diffs
 from botok import BoString
 
@@ -30,16 +32,27 @@ class Diff:
             "IN_SYL_MARK",
         ]
 
-    def __get_type(self, char):
+    @staticmethod
+    def __get_type(char):
         b = BoString(char)
         return b.get_categories()[0]
 
     def __is_sub_char(self, char):
         return self.__get_type(char) in self.sub_char_types
 
-    def __get_last_mingshi(self, text):
-        """Return last mingshi of text."""
+    def __is_dokchen(self, char):
+        return self.__get_type(char) == "SUB_CONS" and char in ["ྲ", "ྱ", "ླ"]
+
+    def __is_vowel(self, char):
+        return self.__get_type(char) in ["VOW", "SKRT_VOW", "KRT_LONG_VOW"]
+
+    def __get_last_mingshi(self, text, sub_char):
+        """Return last main stack of text and whether to duplicate it or not
+
+        Returns (tuple): (duplicate(bool), main_stack(str))
+        """
         mighshi = ""
+        duplicate = False
         for char in reversed(text):
             if self.__is_sub_char(char):
                 mighshi += char
@@ -47,7 +60,11 @@ class Diff:
                 mighshi += char
                 break
 
-        return "".join(reversed(mighshi))
+        if not self.__is_vowel(sub_char) and self.__is_dokchen(mighshi[0]):
+            mighshi = mighshi[1:]
+            duplicate = True
+
+        return duplicate, "".join(reversed(mighshi))
 
     def __handle_sub_char(self, diffs):
         """attach sub char to previous char.
@@ -69,15 +86,32 @@ class Diff:
         for i in range(len(diffs)):
             op, chunk = diffs[i]
             if self.__is_sub_char(chunk[0]):
-                pre_op, pre_chunk = diffs[i - 1]
+                if op != 0:
+                    pre_op, pre_chunk = diffs[i - 1]
 
-                # add previous chunk's last mingshi to current chunk
-                pre_chunk_last_mingshi = self.__get_last_mingshi(pre_chunk)
-                chunk = pre_chunk_last_mingshi + chunk
-                diffs[i] = (op, chunk)
+                    # add previous chunk's last mingshi to current chunk
+                    duplicate, pre_chunk_last_mingshi = self.__get_last_mingshi(
+                        pre_chunk, chunk[0]
+                    )
+                    chunk = pre_chunk_last_mingshi + chunk
+                    diffs[i] = (op, chunk)
 
-                # remove last mingshi from previous chunk
-                diffs[i - 1] = (pre_op, pre_chunk[: -len(pre_chunk_last_mingshi)])
+                    # remove last mingshi from previous chunk
+                    if not duplicate:
+                        diffs[i - 1] = (
+                            pre_op,
+                            pre_chunk[: -len(pre_chunk_last_mingshi)],
+                        )
+                else:
+                    # add vowels to previous diffs
+                    reversed_i = i - 1
+                    reversed_op, reversed_chunk = diffs[reversed_i]
+                    while reversed_i >= 0 and reversed_op != 0:
+                        diffs[reversed_i] = (reversed_op, reversed_chunk + chunk[0])
+                        reversed_i -= 1
+                        reversed_op, reversed_chunk = diffs[reversed_i]
+
+                    diffs[i] = (op, chunk[1:])
 
         return diffs
 
