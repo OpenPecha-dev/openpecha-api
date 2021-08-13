@@ -32,11 +32,19 @@ def test_bug_1():
 
     diffs = differ.compute()
 
-    assert diffs == [(0, "བ"), (-1, "སྒྲུ"), (1, "སྒྱུ"), (0, "བས་")]
+    assert diffs == [(0, "བ"), (-1, "སྒྲ"), (1, "སྒྱ"), (0, "ུབས་")]
 
 
 def test_bug_2():
     differ = Diff("སྲུལ", "སྲལ")
+
+    diffs = differ.compute()
+
+    assert diffs == [(0, ""), (-1, "སྲུ"), (0, "ལ")]
+
+
+def test_bug_4():
+    differ = Diff("སྟོད་", "སྤྱོད་")
 
     diffs = differ.compute()
 

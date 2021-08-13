@@ -27,6 +27,11 @@ class Text(BaseModel):
     notes: Optional[List[NotesPage]]
 
 
+class PedurmaText(BaseModel):
+    namsel: Text
+    google: Text
+
+
 class PedurmaPreviewPage(BaseModel):
     content: str
 

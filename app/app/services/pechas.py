@@ -17,7 +17,7 @@ from app.core.config import settings
 from app.utils import save_upload_file_tmp
 
 
-def get_pecha(pecha_id, branch="reivew"):
+def get_pecha(pecha_id, branch="master"):
     try:
         pecha_path = download_pecha(pecha_id, branch=branch, needs_update=False)
     except PechaNotFound:

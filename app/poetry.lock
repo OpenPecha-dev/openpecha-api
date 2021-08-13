@@ -480,7 +480,7 @@ python-versions = "*"
 
 [[package]]
 name = "openpecha"
-version = "0.7.39"
+version = "0.7.45"
 description = "OpenPecha Toolkit allows state of the art for distributed standoff annotations on moving texts"
 category = "main"
 optional = false
@@ -521,7 +521,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "pedurma"
-version = "0.1.27"
+version = "0.1.30"
 description = "Pedurma Reconstruction functionalities"
 category = "main"
 optional = false
@@ -998,7 +998,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "51ea743137cd6dd96e640090b3fdc8c83158526239d7134d105e60bb714c0b21"
+content-hash = "d92dce71d0bac1f51c769359f30d278608938196f7d849c25a41ce77f19b7425"
 
 [metadata.files]
 alembic = [
@@ -1291,8 +1291,8 @@ nodeenv = [
     {file = "nodeenv-1.6.0.tar.gz", hash = "sha256:3ef13ff90291ba2a4a7a4ff9a979b63ffdd00a464dbe04acf0ea6471517a4c2b"},
 ]
 openpecha = [
-    {file = "openpecha-0.7.39-py3-none-any.whl", hash = "sha256:76f7f0b5e61e64e04f142e878f217bf9aab0fa28901862eebabba8297f3e03d7"},
-    {file = "openpecha-0.7.39.tar.gz", hash = "sha256:2a806af00a8d3a4b972f09a09bd846a6bcf2fc28040f0f7a00d3e323a9bebd25"},
+    {file = "openpecha-0.7.45-py3-none-any.whl", hash = "sha256:64414b54cdad8a75ecc9db0c83d696e4641d52296a69d2eab0816b02df8c57f1"},
+    {file = "openpecha-0.7.45.tar.gz", hash = "sha256:331a0953f46abdb54250b60f688666fe176e0dbf2ea244bd402848619bbd5099"},
 ]
 packaging = [
     {file = "packaging-20.9-py2.py3-none-any.whl", hash = "sha256:67714da7f7bc052e064859c05c595155bd1ee9f69f76557e21f051443c20947a"},
@@ -1303,8 +1303,8 @@ pathspec = [
     {file = "pathspec-0.8.1.tar.gz", hash = "sha256:86379d6b86d75816baba717e64b1a3a3469deb93bb76d613c9ce79edc5cb68fd"},
 ]
 pedurma = [
-    {file = "pedurma-0.1.27-py3-none-any.whl", hash = "sha256:e226bf101539fdfd9483fcab51ef04f380e493971111c7296bb0ffb29f7f26b7"},
-    {file = "pedurma-0.1.27.tar.gz", hash = "sha256:f3a7fdfbf43d408ce1069920eb5f26ad906f24e94417e090a8c7884b0095acb3"},
+    {file = "pedurma-0.1.30-py3-none-any.whl", hash = "sha256:f2e95d22a50dd725f26808e156c44dd7127b778da53cc58c72777ccd90739c60"},
+    {file = "pedurma-0.1.30.tar.gz", hash = "sha256:84b384ff061941431b1ffb70c706f66673375d68f48cc186bcc714eb15e3eb61"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},

@@ -103,15 +103,16 @@ class Diff:
                             pre_chunk[: -len(pre_chunk_last_mingshi)],
                         )
                 else:
-                    # add vowels to previous diffs
-                    reversed_i = i - 1
-                    reversed_op, reversed_chunk = diffs[reversed_i]
-                    while reversed_i >= 0 and reversed_op != 0:
-                        diffs[reversed_i] = (reversed_op, reversed_chunk + chunk[0])
-                        reversed_i -= 1
-                        reversed_op, reversed_chunk = diffs[reversed_i]
+                    pass
+                    # # add vowels to previous diffs
+                    # reversed_i = i - 1
+                    # reversed_op, reversed_chunk = diffs[reversed_i]
+                    # while reversed_i >= 0 and reversed_op != 0:
+                    #     diffs[reversed_i] = (reversed_op, reversed_chunk + chunk[0])
+                    #     reversed_i -= 1
+                    #     reversed_op, reversed_chunk = diffs[reversed_i]
 
-                    diffs[i] = (op, chunk[1:])
+                    # diffs[i] = (op, chunk[1:])
 
         return diffs
 
