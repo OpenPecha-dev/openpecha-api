@@ -198,6 +198,14 @@ class ImageManager:
             imagegroup=imagegroup, filename=previous_filename
         )
 
+    def reset_image_url(self, page_id: str, image_url: str):
+        imagegroup, filename = self.__parse_image_url(image_url)
+        imagegroup, order, file_ext = self.__parse_filename(filename)
+        reset_filename = f"{imagegroup}{int(page_id):04}.{file_ext}"
+        return self.image_url_format.format(
+            imagegroup=imagegroup, filename=reset_filename
+        )
+
 
 class Proofread:
     """

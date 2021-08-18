@@ -61,3 +61,11 @@ def previous_image(image: IIIFImageUrl):
         image.image_url
     )
     return IIIFImageUrl(image_url=next_image_url)
+
+
+@router.post("/images/reset/{page_id}", response_model=IIIFImageUrl)
+def reset_image(page_id: str, image: IIIFImageUrl):
+    reset_image_url = pudrak_kunchok_tsekpa_pr.image_manager.reset_image_url(
+        page_id, image.image_url
+    )
+    return IIIFImageUrl(image_url=reset_image_url)
