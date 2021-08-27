@@ -8,6 +8,7 @@ from app import crud, schemas
 from app.api import deps
 from app.core.slack_gateway import slack_gateway
 from app.services.pechas import (
+    ExportFormat,
     create_editor_content_from_pecha,
     create_export,
     create_opf_pecha,
@@ -214,9 +215,10 @@ def delete_layer(
 def export_pecha(
     pecha_id: str,
     branch: str = "master",
+    format: ExportFormat = ExportFormat.epub,
     user: schemas.user.User = Depends(deps.get_current_user),
 ):
-    download_link = create_export(pecha_id, branch)
+    download_link = create_export(pecha_id, branch, format)
     return {"download_link": download_link}
 
 

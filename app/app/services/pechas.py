@@ -1,7 +1,10 @@
 import shutil
 import tempfile
+from enum import Enum
 
+import openpecha
 from fastapi import HTTPException, UploadFile
+from openpecha import serializers
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
 from openpecha.cli import download_pecha
@@ -12,6 +15,7 @@ from openpecha.formatters.editor import EditorParser
 from openpecha.formatters.empty import EmptyEbook
 from openpecha.github_utils import create_release, get_github_repo
 from openpecha.serializers import EditorSerializer, EpubSerializer
+from openpecha.serializers.docx import DocxSerializer
 
 from app.core.config import settings
 from app.utils import save_upload_file_tmp
@@ -83,13 +87,29 @@ def update_base_layer(pecha_id, base_name, new_base, layers):
     return layers
 
 
-def create_export(pecha_id: str, branch):
+class ExportFormat(str, Enum):
+    epub = ".epub"
+    docx = ".docx"
+
+
+def get_serializer(pecha_path, format: ExportFormat):
+    opf_path = pecha_path / f"{pecha_path.name}.opf"
+
+    if format == ExportFormat.docx:
+        serializer = DocxSerializer(opf_path=opf_path)
+    else:
+        serializer = EpubSerializer(opf_path=opf_path)
+    return serializer
+
+
+def create_export(pecha_id: str, branch: str, format: str):
     pecha_path = download_pecha(pecha_id, branch=branch, needs_update=False)
-    serializer = EpubSerializer(opf_path=pecha_path / f"{pecha_path.name}.opf")
+    serializer = get_serializer(pecha_path, format)
 
     with tempfile.TemporaryDirectory() as tmpdirname:
-        toc_levels = {"1": "sabche"}
-        export_fn = serializer.serialize(toc_levels=toc_levels, output_path=tmpdirname)
+        export_fn = serializer.serialize(
+            output_path=tmpdirname, toc_levels={"1": "sabche"}
+        )
         download_url = create_release(
             pecha_id,
             prerelease=True if branch == "review" else False,
