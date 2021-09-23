@@ -5,32 +5,32 @@ from fastapi import APIRouter, HTTPException, status
 from pedurma import (
     PageNumMissing,
     get_pedurma_text_edit_notes,
+    get_pedurma_text_obj,
     get_preview_page,
-    get_text_obj,
-    save_text,
+    save_pedurma_text,
     update_text_pagination,
 )
+from pedurma.pecha import PedurmaText
 
 from app import schemas
-from app.models.pecha import Pecha
 from app.schemas.pecha import PedurmaPreviewPage
 from app.services.pedurma import create_text_release
 
 router = APIRouter()
 
 
-@router.get("/{pecha_id}/texts/{text_id}", response_model=schemas.Text)
-def read_text(pecha_id: str, text_id: str, page_no: Optional[int] = None):
+@router.get("/texts/{text_id}", response_model=PedurmaText)
+def read_text(text_id: str, page_no: Optional[int] = None):
     """
     Retrieve text from pecha
     """
-    text = get_text_obj(pecha_id, text_id)
+    text = get_pedurma_text_obj(text_id)
     return text
 
 
-@router.put("/{pecha_id}/texts/{text_id}")
-def update_text(pecha_id: str, text_id: str, text_obj: schemas.Text):
-    save_text(pecha_id, text_obj, needs_update=False)
+@router.put("/texts/{text_id}")
+def update_text(text_id: str, text: PedurmaText):
+    save_pedurma_text(text, needs_update=False)
     return {"message": f"{text_id} saved successfully"}
 
 
