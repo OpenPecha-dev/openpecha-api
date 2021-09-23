@@ -30,7 +30,7 @@ def read_text(text_id: str, page_no: Optional[int] = None):
 
 @router.put("/texts/{text_id}")
 def update_text(text_id: str, text: PedurmaText):
-    save_pedurma_text(text, needs_update=False)
+    save_pedurma_text(text)
     return {"message": f"{text_id} saved successfully"}
 
 
