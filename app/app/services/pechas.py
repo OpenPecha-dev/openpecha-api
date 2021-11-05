@@ -7,7 +7,6 @@ from fastapi import HTTPException, UploadFile
 from openpecha import serializers
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
-from openpecha.cli import download_pecha
 from openpecha.core.layer import Layer
 from openpecha.core.pecha import OpenPechaFS
 from openpecha.exceptions import PechaNotFound
@@ -16,6 +15,7 @@ from openpecha.formatters.empty import EmptyEbook
 from openpecha.github_utils import create_release, get_github_repo
 from openpecha.serializers import EditorSerializer, EpubSerializer
 from openpecha.serializers.docx import DocxSerializer
+from openpecha.utils import download_pecha
 
 from app.core.config import settings
 from app.utils import save_upload_file_tmp
