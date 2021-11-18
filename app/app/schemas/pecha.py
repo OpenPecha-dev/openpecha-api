@@ -14,7 +14,7 @@ class PageBase(BaseModel):
 
 
 class Page(PageBase):
-    note_ref: Optional[str]
+    note_ref: Optional[List[str]]
 
 
 class NotesPage(PageBase):
