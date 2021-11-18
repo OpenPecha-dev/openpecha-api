@@ -37,13 +37,13 @@ def update_text(text_id: str, text: PedurmaText):
 @router.post("/preview", response_model=schemas.PedurmaPreviewPage)
 def pedurma_page_preview(
     google_page: schemas.Page,
-    google_page_note: schemas.NotesPage,
+    google_page_notes: List[schemas.NotesPage],
     namsel_page: schemas.Page,
-    namsel_page_note: schemas.NotesPage,
+    namsel_page_notes: List[schemas.NotesPage],
 ):
     try:
         preview_page = get_preview_page(
-            google_page, namsel_page, google_page_note, namsel_page_note
+            google_page, namsel_page, google_page_notes, namsel_page_notes
         )
     except PageNumMissing:
         raise HTTPException(status_code=422, detail="page number is missing in notes")
@@ -51,7 +51,7 @@ def pedurma_page_preview(
 
 
 @router.get("/{text_id}/preview")
-def pedurma_page_preview(text_id: str):
+def pedurma_text_preview(text_id: str):
     download_url = create_text_release(text_id)
     return {"download_url": download_url}
 

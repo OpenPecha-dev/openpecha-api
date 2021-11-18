@@ -45,11 +45,11 @@ def make_text_dir(text_id: str, path: Path):
 
 
 def create_text_release(text_id: str):
-    repo = get_github_repo(settings.PEDURMA_PECHA, "OpenPecha", settings.GITHUB_TOKEN)
+    text_preview, pecha_id = get_preview_text(text_id)
+    repo = get_github_repo(pecha_id, "OpenPecha", settings.GITHUB_TOKEN)
     with tempfile.TemporaryDirectory() as tempdir:
         text_dir = make_text_dir(text_id, tempdir)
 
-        text_preview = get_preview_text(text_id)
         save_preview(text_id, text_preview, path=text_dir)
         get_docx_text(text_id, output_path=text_dir)
 
