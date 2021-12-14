@@ -502,7 +502,7 @@ python-versions = "*"
 
 [[package]]
 name = "openpecha"
-version = "0.7.68"
+version = "0.7.73"
 description = "OpenPecha Toolkit allows state of the art for distributed standoff annotations on moving texts"
 category = "main"
 optional = false
@@ -1115,7 +1115,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "9b5193249b0ad796a4b021dfe7332f577a17607d96d621f2e96f6ed687d9e8a6"
+content-hash = "5688d82f6d8f89fc8280ab9c35dbc42d18da7f86cbdde2062ecfc37d5680352c"
 
 [metadata.files]
 alembic = [
@@ -1417,8 +1417,8 @@ nodeenv = [
     {file = "nodeenv-1.6.0.tar.gz", hash = "sha256:3ef13ff90291ba2a4a7a4ff9a979b63ffdd00a464dbe04acf0ea6471517a4c2b"},
 ]
 openpecha = [
-    {file = "openpecha-0.7.68-py3-none-any.whl", hash = "sha256:0c2a345dfcc1467afe2d96174ea88c9c58f6791d09e93f8fbec06e83dc2238de"},
-    {file = "openpecha-0.7.68.tar.gz", hash = "sha256:665f64342ca9fda6617910e1d10be6ecf52d1645d0bfc5b201eb23b62648509f"},
+    {file = "openpecha-0.7.73-py3-none-any.whl", hash = "sha256:02fde16087727c018546dd057dc78f02701f9aeb09b627d31bc4431ce31f6db2"},
+    {file = "openpecha-0.7.73.tar.gz", hash = "sha256:9702cd34bff11340575efba04b93f7504d2d239fec7132fa8f7664ee429bbfc2"},
 ]
 packaging = [
     {file = "packaging-20.9-py2.py3-none-any.whl", hash = "sha256:67714da7f7bc052e064859c05c595155bd1ee9f69f76557e21f051443c20947a"},
