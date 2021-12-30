@@ -1,4 +1,4 @@
-import re
+from typing import List
 
 from antx.core import get_diffs
 from botok import BoString
@@ -116,7 +116,7 @@ class Diff:
 
         return diffs
 
-    def compute(self):
+    def compute(self) -> List[list]:
         diffs = get_diffs(self.text1, self.text2)
         diffs = self.__handle_sub_char(diffs)
         return diffs

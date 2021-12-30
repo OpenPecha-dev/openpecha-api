@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.api_v1.endpoints import (
+    diff,
     diffproofread,
     login,
     pechas,
@@ -21,6 +22,7 @@ api_router.include_router(proofread.router, prefix="/proofread", tags=["Proofrea
 api_router.include_router(
     diffproofread.router, prefix="/diffproofread", tags=["DiffProofread"]
 )
+api_router.include_router(diff.router, prefix="/diff", tags=["Diff"])
 
 api_router.include_router(login.router, tags=["Authentication"])
 api_router.include_router(users.router, prefix="/users", tags=["Users"])
