@@ -1,7 +1,9 @@
 from pathlib import Path
 from typing import List, Optional
 
+from antx.utils import BASE_DIR
 from fastapi import APIRouter, HTTPException, status
+from openpecha import config as openpecha_config
 from pedurma import (
     PageNumMissing,
     get_pedurma_text_edit_notes,
@@ -10,7 +12,8 @@ from pedurma import (
     save_pedurma_text,
     update_text_pagination,
 )
-from pedurma.pecha import PedurmaText
+from pedurma.pecha import PedurmaText, ProofreadNotePage
+from pedurma.proofreading import get_note_pages, update_note_page
 
 from app import schemas
 from app.schemas.pecha import PedurmaPreviewPage
@@ -81,3 +84,17 @@ def get_completed_texts(task_name: str):
     if not completed_texts_fn.is_file():
         return []
     return completed_texts_fn.read_text().splitlines()
+
+
+@router.get("/{text_id}/notes/proofread", response_model=List[ProofreadNotePage])
+def get_proofread_notes(text_id: str):
+    data_path = openpecha_config.BASE_PATH / "proofread" / "proofread-nalanda-notes"
+    pages = get_note_pages(text_id, data_path)
+    return pages
+
+
+@router.put("/{text_id}/notes/proofread")
+def get_proofread_notes(text_id: str, page: ProofreadNotePage):
+    data_path = openpecha_config.BASE_PATH / "proofread" / "proofread-nalanda-notes"
+    update_note_page(text_id, page, repo_path=data_path)
+    return {"success": True}
