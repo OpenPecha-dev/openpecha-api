@@ -7,7 +7,7 @@ from typing import Dict
 from github.GithubException import UnknownObjectException
 from github.Repository import Repository as Repo
 from openpecha.github_utils import get_github_repo
-from pedurma.reconstruction import get_docx_text, get_preview_text
+from pedurma.preview import get_preview_text
 
 from app.core.config import settings
 
@@ -45,13 +45,11 @@ def make_text_dir(text_id: str, path: Path):
 
 
 def create_text_release(text_id: str):
-    text_preview, pecha_id = get_preview_text(text_id)
-    repo = get_github_repo(pecha_id, "OpenPecha", settings.GITHUB_TOKEN)
     with tempfile.TemporaryDirectory() as tempdir:
         text_dir = make_text_dir(text_id, tempdir)
 
-        save_preview(text_id, text_preview, path=text_dir)
-        get_docx_text(text_id, output_path=text_dir)
+        _, pecha_id = get_preview_text(text_id, output_path=text_dir)
+        repo = get_github_repo(pecha_id, "OpenPecha", settings.GITHUB_TOKEN)
 
         zipped_text_fn = create_zip_file(path=text_dir)
         release = create_empty_release(repo, text_id)
