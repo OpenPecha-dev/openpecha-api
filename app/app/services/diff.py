@@ -85,6 +85,8 @@ class Diff:
         diffs = list(diffs)
         for i in range(len(diffs)):
             op, chunk = diffs[i]
+            if not chunk:
+                continue
             if self.__is_sub_char(chunk[0]):
                 if op != 0:
                     pre_op, pre_chunk = diffs[i - 1]
