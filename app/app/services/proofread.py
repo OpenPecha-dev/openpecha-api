@@ -273,27 +273,36 @@ class DiffProofread:
 
     def get_versions(self, project_name: str):
         project_path = self.data_path / project_name
-        versions = [
-            version.name for version in project_path.iterdir() if version.is_dir()
-        ]
         prooreading_version = (project_path / "proofread.txt").read_text().strip()
+        versions = [
+            version.name
+            for version in project_path.iterdir()
+            if version.is_dir() and version.name != prooreading_version
+        ]
         return versions, prooreading_version
 
-    def get_pages(self, project_name: str, version_id: str):
-        version_path = self.data_path / project_name / version_id
-        return list_sorted_paths_name(version_path)
+    def get_pages(self, project_name: str, version_id: str, vol_id: str):
+        vol_path = self.data_path / project_name / version_id / vol_id
+        return set(list_sorted_paths_name(vol_path))
 
-    def get_page(self, project_name: str, version_id: str, page_id: str):
-        version_path = self.data_path / project_name / version_id
-        base_fn = version_path / f"{page_id}.txt"
-        img_fn = version_path / f"{page_id}.img"
+    def get_page(self, project_name: str, version_id: str, vol_id: str, page_id: str):
+        vol_path = self.data_path / project_name / version_id / vol_id
+        base_fn = vol_path / f"{page_id}.txt"
+        img_fn = vol_path / f"{page_id}.img"
 
         content = base_fn.read_text()
         img_url = img_fn.read_text()
         return content, img_url
 
-    def save_page(self, project_name: str, version_id: str, page_id: str, content: str):
-        version_path = self.data_path / project_name / version_id
-        base_fn = version_path / f"{page_id}.txt"
+    def save_page(
+        self,
+        project_name: str,
+        version_id: str,
+        vol_id: str,
+        page_id: str,
+        content: str,
+    ):
+        vol_path = self.data_path / project_name / version_id / vol_id
+        base_fn = vol_path / f"{page_id}.txt"
 
         base_fn.write_text(content)

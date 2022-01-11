@@ -28,29 +28,29 @@ def get_project_metadata(project_name: str):
     return ProjectMetadata(versions=versions, proofreading_version=prooreading_version)
 
 
-@router.get("/metadata/{project_name}/{version_name}")
-def get_version_metadata(project_name: str, version_name: str):
+@router.get("/metadata/{project_name}/{version_name}/{vol_id}")
+def get_version_metadata(project_name: str, version_name: str, vol_id: str):
     """Return list pages in the version"""
     proofread = DiffProofread()
-    pages = proofread.get_pages(project_name, version_name)
+    pages = proofread.get_pages(project_name, version_name, vol_id)
     return VersionMetadata(pages=pages)
 
 
-@router.get("/{project_name}/{version_name}/{page_id}")
-def read_page(project_name: str, version_name: str, page_id: str):
+@router.get("/{project_name}/{version_name}/{vol_id}/{page_id}")
+def read_page(project_name: str, version_name: str, vol_id: str, page_id: str):
     """Return a page and image"""
     proofread = DiffProofread()
-    content, img_url = proofread.get_page(project_name, version_name, page_id)
+    content, img_url = proofread.get_page(project_name, version_name, vol_id, page_id)
     return ProofreadPage(content=content, image_url=img_url)
 
 
-@router.post("/{project_name}/{version_name}/{page_id}")
+@router.put("/{project_name}/{version_name}/{vol_id}/{page_id}")
 def update_page(
-    project_name: str, version_name: str, page_id: str, page: ProofreadPage
+    project_name: str, version_name: str, page_id: str, vol_id: str, page: ProofreadPage
 ):
     """Update page with new content"""
     proofread = DiffProofread()
-    proofread.save_page(project_name, version_name, page_id, page.content)
+    proofread.save_page(project_name, version_name, vol_id, page_id, page.content)
     return {"success": True}
 
 
