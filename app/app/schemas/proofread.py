@@ -14,3 +14,12 @@ class PageDiff(BaseModel):
 
 class IIIFImageUrl(BaseModel):
     image_url: AnyHttpUrl
+
+
+class ProjectMetadata(BaseModel):
+    versions: List[str]
+    proofreading_version: str
+
+
+class VersionMetadata(BaseModel):
+    pages: List[str]
