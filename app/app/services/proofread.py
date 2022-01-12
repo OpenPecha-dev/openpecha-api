@@ -11,12 +11,8 @@ from app.schemas.proofread import ProofreadPage
 from .diff import Diff
 
 
-def path2names(paths):
-    return [path.stem for path in paths]
-
-
 def list_sorted_paths_name(path):
-    return path2names(sorted(set(path.iterdir())))
+    return sorted(set([path.stem for path in path.iterdir()]))
 
 
 class PechaType(str, Enum):
@@ -283,7 +279,7 @@ class DiffProofread:
 
     def get_pages(self, project_name: str, version_id: str, vol_id: str):
         vol_path = self.data_path / project_name / version_id / vol_id
-        return set(list_sorted_paths_name(vol_path))
+        return list_sorted_paths_name(vol_path)
 
     def get_page(self, project_name: str, version_id: str, vol_id: str, page_id: str):
         vol_path = self.data_path / project_name / version_id / vol_id
