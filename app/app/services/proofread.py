@@ -16,7 +16,7 @@ def path2names(paths):
 
 
 def list_sorted_paths_name(path):
-    return path2names(sorted((path.iterdir())))
+    return path2names(sorted(set(path.iterdir())))
 
 
 class PechaType(str, Enum):
