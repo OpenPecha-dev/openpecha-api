@@ -277,7 +277,7 @@ class DiffProofread:
         versions = [
             version.name
             for version in project_path.iterdir()
-            if version.is_dir() and version.name != prooreading_version
+            if version.is_dir() and version.name not in [prooreading_version, ".git"]
         ]
         return versions, prooreading_version
 
