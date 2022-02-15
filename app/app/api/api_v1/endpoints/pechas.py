@@ -1,7 +1,8 @@
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from openpecha.core.layer import Layer, LayerEnum, PechaMetaData
+from openpecha.core.annotations import Span
+from openpecha.core.layer import Layer, LayerEnum, PechaMetaData, SpanINFO
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -295,3 +296,11 @@ def update_metadata(
     )
     pecha_db = crud.pecha.update(db, db_obj=pecha_db, obj_in=pecha_obj)
     return pecha_db
+
+
+@router.post("/{pecha_id}/{base_name}/span", response_model=SpanINFO)
+def get_span_info(pecha_id: str, base_name: str, span: Span, layers: List[LayerEnum]):
+    pecha = get_pecha(pecha_id)
+    print(span, layers)
+    span_info = pecha.get_span_info(base_name, span, layers)
+    return span_info
