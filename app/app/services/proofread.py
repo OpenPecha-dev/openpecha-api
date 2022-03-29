@@ -266,9 +266,10 @@ class Proofread:
 class DiffProofread:
     def __init__(self):
         self.data_path = BASE_PATH / "proofread"
+        self.versions_path = "versions"
 
     def get_versions(self, project_name: str):
-        project_path = self.data_path / project_name
+        project_path = self.data_path / project_name / self.versions_path
         prooreading_version = (project_path / "proofread.txt").read_text().strip()
         versions = [
             version.name
@@ -278,11 +279,15 @@ class DiffProofread:
         return versions, prooreading_version
 
     def get_pages(self, project_name: str, version_id: str, vol_id: str):
-        vol_path = self.data_path / project_name / version_id / vol_id
+        vol_path = (
+            self.data_path / project_name / self.versions_path / version_id / vol_id
+        )
         return list_sorted_paths_name(vol_path)
 
     def get_page(self, project_name: str, version_id: str, vol_id: str, page_id: str):
-        vol_path = self.data_path / project_name / version_id / vol_id
+        vol_path = (
+            self.data_path / project_name / self.versions_path / version_id / vol_id
+        )
         base_fn = vol_path / f"{page_id}.txt"
         img_fn = vol_path / f"{page_id}.img"
 
@@ -298,7 +303,9 @@ class DiffProofread:
         page_id: str,
         content: str,
     ):
-        vol_path = self.data_path / project_name / version_id / vol_id
+        vol_path = (
+            self.data_path / project_name / self.versions_path / version_id / vol_id
+        )
         base_fn = vol_path / f"{page_id}.txt"
 
         base_fn.write_text(content)
