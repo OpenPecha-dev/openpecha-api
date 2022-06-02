@@ -283,6 +283,14 @@ curio = ["curio (>=1.2)", "sniffio (>=1.1)"]
 trio = ["trio (>=0.14.0)", "sniffio (>=1.1)"]
 
 [[package]]
+name = "editdistpy"
+version = "0.1.3"
+description = "Fast Levenshtein and Damerau optimal string alignment algorithms."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[[package]]
 name = "email-validator"
 version = "1.1.2"
 description = "A robust email syntax and deliverability validation library for Python 2.x/3.x."
@@ -970,6 +978,17 @@ python-versions = ">=3.6"
 full = ["aiofiles", "graphene", "itsdangerous", "jinja2", "python-multipart", "pyyaml", "requests", "ujson"]
 
 [[package]]
+name = "symspellpy"
+version = "6.7.6"
+description = "Python SymSpell"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+editdistpy = ">=0.1.3"
+
+[[package]]
 name = "tenacity"
 version = "7.0.0"
 description = "Retry code until it succeeds"
@@ -1124,7 +1143,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "a5d471b9f1320bad7aea4727c85b67bd73669832aa169f2be5a040850c490436"
+content-hash = "379994314fb05fcd888400246bed41f5012cce848696398fa23d4d62eb00fdfc"
 
 [metadata.files]
 alembic = [
@@ -1212,6 +1231,16 @@ distlib = [
 dnspython = [
     {file = "dnspython-2.1.0-py3-none-any.whl", hash = "sha256:95d12f6ef0317118d2a1a6fc49aac65ffec7eb8087474158f42f26a639135216"},
     {file = "dnspython-2.1.0.zip", hash = "sha256:e4a87f0b573201a0f3727fa18a516b055fd1107e0e5477cded4a2de497df1dd4"},
+]
+editdistpy = [
+    {file = "editdistpy-0.1.3-cp36-cp36m-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7f951243c0f7074415849ca18d107891e98afe0f5381fb65bd39768633ab6748"},
+    {file = "editdistpy-0.1.3-cp36-cp36m-win_amd64.whl", hash = "sha256:4e7e1ac3c59d479f568e38729b022240cc46f5e6753ba1c023456314970bb149"},
+    {file = "editdistpy-0.1.3-cp37-cp37m-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b747995aebe987a565cff0e56812bf08e4e4e9ba8b7f094804845d9e53b20533"},
+    {file = "editdistpy-0.1.3-cp37-cp37m-win_amd64.whl", hash = "sha256:a74fdc3becf0dc115d9f34cc45dcfa0e5154f5348f2b34ccc71026b064c22689"},
+    {file = "editdistpy-0.1.3-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:28f71c6343a996776f5691da19136a558593428ad6a10baab85795fa21a461ff"},
+    {file = "editdistpy-0.1.3-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:aa559312e07ff8835470d0d9b2f245aa2bc9c2d3370a6c5812508e6f0265a523"},
+    {file = "editdistpy-0.1.3-cp38-cp38-win_amd64.whl", hash = "sha256:7c00a540d17b998519b100a610acc1e1f2aa015b2b8dc268dcd62eeae4259916"},
+    {file = "editdistpy-0.1.3.tar.gz", hash = "sha256:b3cad07319d79fe8b3ba6bf92293de962932917d88e9c624df7b6a44bddf1dcc"},
 ]
 email-validator = [
     {file = "email-validator-1.1.2.tar.gz", hash = "sha256:1a13bd6050d1db4475f13e444e169b6fe872434922d38968c67cea9568cce2f0"},
@@ -1700,6 +1729,10 @@ sqlalchemy = [
 starlette = [
     {file = "starlette-0.13.6-py3-none-any.whl", hash = "sha256:bd2ffe5e37fb75d014728511f8e68ebf2c80b0fa3d04ca1479f4dc752ae31ac9"},
     {file = "starlette-0.13.6.tar.gz", hash = "sha256:ebe8ee08d9be96a3c9f31b2cb2a24dbdf845247b745664bd8a3f9bd0c977fdbc"},
+]
+symspellpy = [
+    {file = "symspellpy-6.7.6-py3-none-any.whl", hash = "sha256:c7fb73beaf251903ea8ab71e214e7b31cf1def9351d098b6a2aacb04f4478f41"},
+    {file = "symspellpy-6.7.6.tar.gz", hash = "sha256:3f96149a424411fb5f292a15a650a17ccf8d4946c61e06eae6bf7f9ebcd67ba8"},
 ]
 tenacity = [
     {file = "tenacity-7.0.0-py2.py3-none-any.whl", hash = "sha256:a0ce48587271515db7d3a5e700df9ae69cce98c4b57c23a4886da15243603dd8"},

@@ -4,7 +4,15 @@ import secrets
 from functools import lru_cache
 from typing import Any, Dict, List, Optional, Union
 
-from pydantic import AnyHttpUrl, BaseSettings, EmailStr, HttpUrl, PostgresDsn, validator
+from pydantic import (
+    AnyHttpUrl,
+    BaseSettings,
+    EmailStr,
+    FilePath,
+    HttpUrl,
+    PostgresDsn,
+    validator,
+)
 
 log = logging.getLogger("unvicorn")
 
@@ -68,6 +76,9 @@ class Settings(BaseSettings):
     USERS_OPEN_REGISTRATION: bool = False
 
     PEDURMA_PECHA: str
+
+    # Sympell
+    SYMSPELL_DICTIONARY_PATH: FilePath
 
     class Config:
         case_sensitive = True
