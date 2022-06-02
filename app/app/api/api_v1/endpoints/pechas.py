@@ -2,7 +2,8 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
 from openpecha.core.annotations import Span
-from openpecha.core.layer import Layer, LayerEnum, PechaMetaData, SpanINFO
+from openpecha.core.layer import Layer, LayerEnum, SpanINFO
+from openpecha.core.metadata import PechaMetadata
 from sqlalchemy.orm import Session
 
 from app import crud, schemas
@@ -247,7 +248,7 @@ def update_pecha(
     return {"success": True}
 
 
-@router.get("/{pecha_id}/metadata", response_model=PechaMetaData)
+@router.get("/{pecha_id}/metadata", response_model=PechaMetadata)
 def read_metadata(*, pecha_id: str):
     pecha = get_pecha(pecha_id)
     pecha.meta.id
@@ -258,7 +259,7 @@ def read_metadata(*, pecha_id: str):
 def update_metadata(
     *,
     pecha_id: str,
-    metadata: PechaMetaData,
+    metadata: PechaMetadata,
     # front_cover_image: Optional[UploadFile] = File(None),
     # publication_data_image: Optional[UploadFile] = File(None),
     db: Session = Depends(deps.get_db),
