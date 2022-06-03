@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.api.api_v1.endpoints import (
+    correction,
     diff,
     diffproofread,
     login,
@@ -26,3 +27,4 @@ api_router.include_router(diff.router, prefix="/diff", tags=["Diff"])
 
 api_router.include_router(login.router, tags=["Authentication"])
 api_router.include_router(users.router, prefix="/users", tags=["Users"])
+api_router.include_router(correction.router, prefix="/correction", tags=["Correction"])
