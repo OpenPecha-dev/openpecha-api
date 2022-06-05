@@ -571,7 +571,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "pedurma"
-version = "0.1.103"
+version = "0.1.104"
 description = "Pedurma Reconstruction functionalities"
 category = "main"
 optional = false
@@ -1143,7 +1143,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "379994314fb05fcd888400246bed41f5012cce848696398fa23d4d62eb00fdfc"
+content-hash = "2d281410ba5eca90f27bc72662b9432119ee86ab17bf1c29226acd2a4f3f2b33"
 
 [metadata.files]
 alembic = [
@@ -1470,8 +1470,8 @@ pathspec = [
     {file = "pathspec-0.8.1.tar.gz", hash = "sha256:86379d6b86d75816baba717e64b1a3a3469deb93bb76d613c9ce79edc5cb68fd"},
 ]
 pedurma = [
-    {file = "pedurma-0.1.103-py3-none-any.whl", hash = "sha256:75ae633396e31b2e702aa226347e84ec0a4ace529ca03908b18a364fc99e5e95"},
-    {file = "pedurma-0.1.103.tar.gz", hash = "sha256:33b1f4e18d3c218912ded282479c92ac34d6c8048e0cdb9dc598ce0b106df942"},
+    {file = "pedurma-0.1.104-py3-none-any.whl", hash = "sha256:acd6c5ef1b5a908f77b965f9fb2383a9dca2e2b132515717af9e962f07853c24"},
+    {file = "pedurma-0.1.104.tar.gz", hash = "sha256:fc5d2e0b3bb052dcf29deca982ae9e99a680fecb27ac1d00595448f06fc36338"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
