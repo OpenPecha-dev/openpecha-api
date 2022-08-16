@@ -1,3 +1,4 @@
+from ossaudiodev import SNDCTL_SYNTH_REMOVESAMPLE
 from typing import List
 
 from symspellpy import SymSpell, Verbosity
@@ -23,14 +24,20 @@ class SymSpellModel:
         )
 
     def get_candidates(self, word: str, n=float("inf")) -> List[str]:
+        suggested_words = []
+
         suggestions = self.sym_spell.lookup(
             word, Verbosity.CLOSEST, max_edit_distance=2
         )
-        suggested_words = []
         for i, suggestion in enumerate(suggestions):
             if i > n:
                 break
             suggested_words.append(suggestion.term)
+
+        suggestions = self.sym_spell.lookup_compound(word, max_edit_distance=2)
+        for suggestion in suggestions:
+            suggested_words.append(suggestion.term)
+
         return suggested_words
 
 
