@@ -2,9 +2,7 @@ import shutil
 import tempfile
 from enum import Enum
 
-import openpecha
 from fastapi import HTTPException, UploadFile
-from openpecha import serializers
 from openpecha.blupdate import Blupdate, update_ann_layer
 from openpecha.catalog.manager import CatalogManager
 from openpecha.core.layer import Layer
@@ -27,7 +25,7 @@ def get_pecha(pecha_id, branch="master"):
     except PechaNotFound:
         raise HTTPException(status_code=404, detail="Pecha not found")
 
-    pecha = OpenPechaFS(opf_path=pecha_path / f"{pecha_id}.opf")
+    pecha = OpenPechaFS(path=pecha_path)
     return pecha
 
 

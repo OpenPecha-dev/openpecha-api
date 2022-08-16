@@ -302,6 +302,5 @@ def update_metadata(
 @router.post("/{pecha_id}/{base_name}/span", response_model=SpanINFO)
 def get_span_info(pecha_id: str, base_name: str, span: Span, layers: List[LayerEnum]):
     pecha = get_pecha(pecha_id)
-    print(span, layers)
     span_info = pecha.get_span_info(base_name, span, layers)
     return span_info
