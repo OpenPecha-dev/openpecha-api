@@ -26,11 +26,10 @@ RUN mkdir /usr/share/fonts/truetype/monlam
 RUN wget https://github.com/OpenPecha/ebook-template/raw/master/monlam_uni_ouchan2.ttf
 RUN mv monlam_uni_ouchan2.ttf /usr/share/fonts/truetype/monlam/
 
-# Install Poetry
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | POETRY_HOME=/opt/poetry python && \
-    cd /usr/local/bin && \
-    ln -s /opt/poetry/bin/poetry && \
-    poetry config virtualenvs.create false
+# Install Poetry 
+RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=/opt/poetry python3
+ENV PATH="/opt/poetry/bin:$PATH"
+RUN poetry config virtualenvs.create false
 
 # Copy poetry.lock* in case it doesn't exist in the repo
 COPY ./app/pyproject.toml ./app/poetry.lock* /app/
