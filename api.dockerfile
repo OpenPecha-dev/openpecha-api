@@ -19,8 +19,8 @@ RUN : \
 
 
 # install calibre
-RUN wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin
-RUN ebook-convert --version
+# RUN wget -nv -O- https://download.calibre-ebook.com/linux-installer.sh | sh /dev/stdin
+# RUN ebook-convert --version
 
 # install monlam fonts
 RUN mkdir /usr/share/fonts/truetype/monlam
